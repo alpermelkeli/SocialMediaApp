@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alpermelkeli.socialmediaapp.R
@@ -33,7 +32,7 @@ import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Login(){
+fun Login(onClickedLogin:()->Unit, onClickedSwitchAccounts:()->Unit, onClickedSignUp:()->Unit){
 
     SocialMediaAppTheme {
         val darkTheme = isSystemInDarkTheme()
@@ -71,6 +70,7 @@ fun Login(){
                 DefaultButton(modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp), isEnabled = true){
+                    onClickedLogin()
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
@@ -87,11 +87,4 @@ fun Login(){
 
     }
 
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview(){
-    Login()
 }

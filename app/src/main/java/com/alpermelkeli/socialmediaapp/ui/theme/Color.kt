@@ -5,3 +5,4 @@ import androidx.compose.ui.graphics.Color
 val Blue50 = Color(0xFF3797EF)
 val Black50 = Color(0xFF262626)
 val Grey50 = Color(0xFF767680)
+val Grey20 = Color(0xFFF1F1F1)

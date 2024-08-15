@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1044478469426",
+    "project_id": "instaclone-31e6f",
+    "storage_bucket": "instaclone-31e6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044478469426:android:f8f76b97ab5667fa9c632b",
+        "android_client_info": {
+          "package_name": "com.alpermelkeli.socialmediaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSdpvFvlEkw0U_jFrMRR7x-jpNOXcrqdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
