@@ -13,13 +13,11 @@ import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 @Composable
 fun HomeNavHost(navController: NavHostController,
                 onNavigate: (route: String) -> Unit,
-                startDestination: HomeRoutes,
-                postsViewModel: PostsViewModel,
-                userViewModel:UserViewModel){
+                startDestination: HomeRoutes){
 
     NavHost(navController = navController, startDestination = startDestination.route) {
         composable(HomeRoutes.HomePage.route){
-            HomePage(postsViewModel,userViewModel)
+            HomePage()
         }
         composable(HomeRoutes.Profile.route){
             Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)})

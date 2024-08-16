@@ -14,9 +14,6 @@ import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 @Composable
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
 
-    val userModel : UserViewModel = viewModel()
-    val postsViewModel : PostsViewModel = viewModel()
-
     NavHost(navController = navController , startDestination = startDestination) {
         composable(NavRoutes.Login.route){
             Login(
@@ -31,14 +28,13 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
                 onClickForgotPassword = {},
                 onClickLogin = {navController.navigate(NavRoutes.Home.route)},
                 onClickSignUp = {},
-                userModel = userModel
             )
         }
         composable(NavRoutes.SignUp.route){
             SignUp()
         }
         composable(NavRoutes.Home.route){
-            HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)}, postsViewModel = postsViewModel, userViewModel = userModel)
+            HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)})
         }
     }
 

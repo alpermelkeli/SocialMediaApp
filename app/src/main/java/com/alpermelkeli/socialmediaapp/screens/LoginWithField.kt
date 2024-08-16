@@ -44,7 +44,7 @@ import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit, userModel:UserViewModel){
+fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
 
 
     var usernameText by remember {
@@ -58,7 +58,6 @@ fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPass
             usernameText.isNotEmpty()&&passwordText.isNotEmpty()
         }
     }
-
 
     SocialMediaAppTheme {
 
