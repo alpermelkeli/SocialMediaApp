@@ -8,13 +8,14 @@ import androidx.navigation.compose.composable
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
+import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @Composable
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
 
     val userModel : UserViewModel = viewModel()
-
+    val postsViewModel : PostsViewModel = viewModel()
 
     NavHost(navController = navController , startDestination = startDestination) {
         composable(NavRoutes.Login.route){
@@ -37,7 +38,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
             SignUp()
         }
         composable(NavRoutes.Home.route){
-            HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)})
+            HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)}, postsViewModel = postsViewModel, userViewModel = userModel)
         }
     }
 

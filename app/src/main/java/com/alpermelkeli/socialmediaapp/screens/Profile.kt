@@ -7,7 +7,9 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
 @Composable
 fun Profile(onClickedLogOut:()->Unit){
-    Button(onClick = {AuthOperations.logOut()}) {
+    Button(onClick = {AuthOperations.logOut()
+        onClickedLogOut()
+    }) {
 
 
     }

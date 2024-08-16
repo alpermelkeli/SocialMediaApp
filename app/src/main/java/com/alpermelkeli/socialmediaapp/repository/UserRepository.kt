@@ -14,7 +14,6 @@ class UserRepository {
                     .document(id)
                     .get()
                     .await()
-
                 val profilePhoto = root.getString("profilePhoto") ?: "error"
                 val username = root.getString("username") ?: "error"
                 val about = root.getString("about") ?: "error"

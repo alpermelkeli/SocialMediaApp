@@ -30,12 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeNavContainer(initialTab:HomeRoutes,
-                     onNavigate:(route:String)->Unit){
+                     onNavigate:(route:String)->Unit,
+                     postsViewModel: PostsViewModel,
+                     userViewModel:UserViewModel){
     val navController = rememberNavController()
     var selectedRoute by remember {
         mutableStateOf(initialTab)
@@ -87,7 +90,9 @@ fun HomeNavContainer(initialTab:HomeRoutes,
             HomeNavHost(
                 navController = navController,
                 onNavigate = onNavigate,
-                startDestination = initialTab
+                startDestination = initialTab,
+                postsViewModel = postsViewModel,
+                userViewModel = userViewModel
             )
         }
     }
