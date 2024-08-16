@@ -36,9 +36,7 @@ import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeNavContainer(initialTab:HomeRoutes,
-                     onNavigate:(route:String)->Unit,
-                     postsViewModel: PostsViewModel,
-                     userViewModel:UserViewModel){
+                     onNavigate:(route:String)->Unit){
     val navController = rememberNavController()
     var selectedRoute by remember {
         mutableStateOf(initialTab)
@@ -90,9 +88,7 @@ fun HomeNavContainer(initialTab:HomeRoutes,
             HomeNavHost(
                 navController = navController,
                 onNavigate = onNavigate,
-                startDestination = initialTab,
-                postsViewModel = postsViewModel,
-                userViewModel = userViewModel
+                startDestination = initialTab
             )
         }
     }
