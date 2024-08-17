@@ -7,10 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.PostsRepository
+import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
-class PostsViewModel(application: Application) : AndroidViewModel(application) {
-    private val postsRepository = PostsRepository()
+class PostsViewModel(application: Application, private val postsRepository: PostsRepository) : AndroidViewModel(application) {
 
     private val _homePagePosts : MutableLiveData<List<Post>> = MutableLiveData()
 

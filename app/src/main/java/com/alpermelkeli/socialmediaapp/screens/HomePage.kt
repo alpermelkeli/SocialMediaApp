@@ -67,7 +67,6 @@ fun HomePage(){
                 }
 
                 items(posts.value){
-                    println(posts.value)
                     Post(post = it)
                 }
             }

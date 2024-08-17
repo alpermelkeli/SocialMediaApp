@@ -8,9 +8,8 @@ import com.alpermelkeli.socialmediaapp.model.User
 import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
-class UserViewModel(application: Application): AndroidViewModel(application) {
+class UserViewModel(application: Application, private val userRepository: UserRepository): AndroidViewModel(application) {
 
-    private val userRepository = UserRepository()
 
     private val _user : MutableLiveData<User> = MutableLiveData()
 
