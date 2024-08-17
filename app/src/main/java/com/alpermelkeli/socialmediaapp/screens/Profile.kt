@@ -61,7 +61,7 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 @OptIn(ExperimentalCoilApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Profile(onClickedLogOut:()->Unit){
+fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
@@ -98,8 +98,10 @@ fun Profile(onClickedLogOut:()->Unit){
     val rowScrollState = rememberLazyListState()
 
     Scaffold(Modifier.fillMaxSize(),
-        topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {onClickedLogOut()
-         AuthOperations.logOut()}
+        topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {
+            AuthOperations.logOut()
+            onClickedLogOut()
+        }
         )}) {
         LazyColumn(Modifier.fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -200,11 +202,13 @@ fun Profile(onClickedLogOut:()->Unit){
                         .padding(4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    rowItems.forEach { item ->
-                        ProfilePostCard(item, Modifier
+                    rowItems.forEach { post ->
+                        ProfilePostCard(post, Modifier
                             .weight(1f)
                             .padding(0.5.dp)
-                            .height(120.dp))
+                            .height(120.dp)){
+                            onClickedPost(userPosts.indexOf(it))
+                        }
                     }
                     if (rowItems.size < 3) {
                         repeat(3 - rowItems.size) {
@@ -254,18 +258,3 @@ fun IndicatorText(number:String,label:String){
     }
 
 }
-
-@Preview
-@Composable
-fun ProfilePreview(){
-    Profile {
-
-    }
-}
-/*Button(onClick = {AuthOperations.logOut()
-                    onClickedLogOut()
-}) {
-
-
-}
- */

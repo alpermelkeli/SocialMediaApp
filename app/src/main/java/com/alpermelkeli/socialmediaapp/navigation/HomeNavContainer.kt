@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.Navigation
 import androidx.navigation.compose.rememberNavController
 import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
@@ -61,7 +63,7 @@ fun HomeNavContainer(initialTab:HomeRoutes,
     Scaffold(bottomBar = {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.background,
+                containerColor = Color.Transparent,
                 modifier = Modifier.height(bottomBarHeight)
             ) {
                 homeRoutes.forEach {

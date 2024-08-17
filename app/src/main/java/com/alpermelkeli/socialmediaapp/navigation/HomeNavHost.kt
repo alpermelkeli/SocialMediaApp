@@ -20,7 +20,7 @@ fun HomeNavHost(navController: NavHostController,
             HomePage()
         }
         composable(HomeRoutes.Profile.route){
-            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)})
+            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it")})
         }
         composable(HomeRoutes.Search.route){
             Search()
