@@ -24,19 +24,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
 
 @Composable
-fun StoriesRow(stories:List<String>, scrollState: LazyListState, onClickedStory:(String)->Unit){
+fun StoriesRow(size:Dp,stories:List<String>, scrollState: LazyListState, onClickedStory:(String)->Unit){
 
     LazyRow(modifier = Modifier
         .fillMaxWidth()
-        .height(100.dp)
+        .height(size)
         .background(MaterialTheme.colorScheme.background),
         state = scrollState) {
         items(stories){
-            StoriesRowItem(it){
+            StoriesRowItem(size,false,it){
                 onClickedStory(it)
             }
         }
@@ -46,21 +47,21 @@ fun StoriesRow(stories:List<String>, scrollState: LazyListState, onClickedStory:
 }
 
 @Composable
-fun StoriesRowItem(username:String, onClickedStory: (String) -> Unit){
+fun StoriesRowItem(size:Dp,isOpened:Boolean,username:String, onClickedStory: (String) -> Unit){
     Column(modifier = Modifier
-        .size(100.dp)
+        .size(size = size)
         .clickable { onClickedStory(username) },
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(70.dp),
+        Box(Modifier.size(size.times(0.7f)),
             contentAlignment = Alignment.Center) {
             Image(imageVector = ImageVector.vectorResource(id = R.drawable.story_oval), contentDescription = "story",
                 modifier = Modifier.clip(CircleShape)
-                    .size(70.dp))
+                    .size(size.times(0.7f)))
 
             Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_background), contentDescription = "user",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(60.dp)
+                    .size(size.times(0.6f))
             )
         }
 

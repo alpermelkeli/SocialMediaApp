@@ -4,8 +4,7 @@ data class User(
     val id:String,
     val username:String,
     val profilePhoto:String,
-    val followers:List<User>,
-    val following:List<User>,
-    var posts:List<Post>,
+    val followers:List<String>,
+    val following:List<String>,
     val about:String
 )

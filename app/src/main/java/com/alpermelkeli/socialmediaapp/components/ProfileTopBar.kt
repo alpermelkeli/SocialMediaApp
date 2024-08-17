@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ProfileTopBar(onMenuClicked:()->Unit){
+fun ProfileTopBar(username:String, onMenuClicked:()->Unit){
     Box(modifier = Modifier.fillMaxWidth().height(90.dp).background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center) {
         Text(
-            text = "alpermelkeli",
+            text = username,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.secondary

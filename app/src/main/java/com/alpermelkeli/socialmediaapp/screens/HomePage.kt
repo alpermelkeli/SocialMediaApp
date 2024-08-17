@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,26 +27,22 @@ import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 @Composable
 fun HomePage(){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
     val userViewModel = context.userViewModel
+    val user by userViewModel.user.observeAsState()
+
     val postViewModel = context.postsViewModel
+    val homePagePosts by postViewModel.homePagePosts.observeAsState(emptyList())
 
     LaunchedEffect(Unit) {
         userViewModel.getUser(AuthOperations.getUser()?.uid.toString())
     }
 
-    val user = userViewModel.user.observeAsState()
 
-    LaunchedEffect(user.value) {
-        val followingList = mutableListOf<String>()
-
-        user.value?.following?.forEach {
-            followingList.add(it.id)
-        }
-
-        postViewModel.getUserHomePagePosts(followingList)
+    LaunchedEffect(user) {
+        user?.following?.let { postViewModel.getUserHomePagePosts(it) }
     }
 
-    val posts = postViewModel.homePagePosts.observeAsState(emptyList())
 
     val isDark = isSystemInDarkTheme()
 
@@ -63,10 +60,10 @@ fun HomePage(){
                 item {
                     Spacer(modifier = Modifier.height(90.dp))
 
-                    StoriesRow(stories = exampleStories, scrollState = storyRowScrollState, onClickedStory = { println(it) })
+                    StoriesRow(size = 100.dp,stories = exampleStories, scrollState = storyRowScrollState, onClickedStory = { println(it) })
                 }
 
-                items(posts.value){
+                items(homePagePosts){
                     Post(post = it)
                 }
             }
