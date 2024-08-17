@@ -72,7 +72,7 @@ fun Post(post: Post){
                 Spacer(modifier = Modifier.width(10.dp))
 
                 
-                Image(painter = rememberImagePainter(data = "post.sender.profilePhoto"), contentDescription = "photo",
+                Image(painter = rememberImagePainter(data = post.sender.profilePhoto), contentDescription = "photo",
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape))
@@ -83,7 +83,7 @@ fun Post(post: Post){
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.height(25.dp)) {
 
-                    Text(text = "post.sender.username",
+                    Text(text = post.sender.username,
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Start,
