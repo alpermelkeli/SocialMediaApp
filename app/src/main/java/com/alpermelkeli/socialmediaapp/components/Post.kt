@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.model.Post
 import coil.compose.rememberImagePainter
@@ -72,7 +73,7 @@ fun Post(post: Post){
                 Spacer(modifier = Modifier.width(10.dp))
 
                 
-                Image(painter = rememberImagePainter(data = post.senderPhoto), contentDescription = "photo",
+                Image(painter = rememberAsyncImagePainter(model = post.senderPhoto), contentDescription = "photo",
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape))
@@ -111,7 +112,7 @@ fun Post(post: Post){
                 .height(360.dp),
                 contentAlignment = Alignment.Center) {
 
-                Image(painter = rememberImagePainter(data = images[it]), contentDescription = "image",
+                Image(painter = rememberAsyncImagePainter(model = images[it]), contentDescription = "image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop)
 
