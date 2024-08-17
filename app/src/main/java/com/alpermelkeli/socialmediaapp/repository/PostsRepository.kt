@@ -2,9 +2,9 @@ package com.alpermelkeli.socialmediaapp.repository
 
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.runBlocking
 
 class PostsRepository {
-
     private val db = FirebaseFirestore.getInstance()
 
     fun getUserHomePagePosts(followings: List<String>, callBack: (List<Post>) -> Unit) {
@@ -29,7 +29,6 @@ class PostsRepository {
                 callBack(posts)
             }
             .addOnFailureListener { exception ->
-                // Handle any errors here
                 callBack(emptyList())
             }
     }
