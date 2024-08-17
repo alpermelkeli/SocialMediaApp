@@ -5,5 +5,6 @@ data class Post(
     val comments:List<String>,
     val likeCount:Int,
     val images:List<String>,
-    val sender:User
+    val senderPhoto:String,
+    val senderUsername:String
 )

@@ -27,7 +27,7 @@ class SocialMediaApplication: Application() {
 
     private fun initialize() {
         userRepository = UserRepository()
-        postRepository = PostsRepository(userRepository)
+        postRepository = PostsRepository()
         userViewModel = UserViewModel(application = this, userRepository)
         postsViewModel = PostsViewModel(application = this, postRepository)
     }
