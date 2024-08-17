@@ -37,5 +37,10 @@ class PostsViewModel(application: Application, private val postsRepository: Post
     }
 
 
+    fun uploadUserPost(post: Post){
+        viewModelScope.launch {
+            postsRepository.uploadUserPost(post)
+        }
+    }
 
 }

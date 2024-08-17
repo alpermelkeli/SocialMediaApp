@@ -1,5 +1,6 @@
 package com.alpermelkeli.socialmediaapp.repository
 
+import android.util.Log
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -57,9 +58,21 @@ class PostsRepository {
             }
     }
 
+    fun uploadUserPost(post: Post) {
+        val postCollection = db.collection("Posts")
+        val postByUser = mapOf(
+            "images" to post.images,
+            "sender" to post.id,
+            "senderPhoto" to post.senderPhoto,
+            "username" to post.senderUsername,
+            "comments" to post.comments,
+            "likeCount" to post.likeCount
+        )
 
-
-
-
+        postCollection.add(postByUser)
+            .addOnSuccessListener{
+                Log.d("uploadTask", "your upload task has been completed")
+            }
+    }
 
 }
