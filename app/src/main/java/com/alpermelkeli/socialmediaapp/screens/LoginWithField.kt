@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,12 +42,11 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.repository.AuthResults
 import com.alpermelkeli.socialmediaapp.ui.theme.Blue50
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
-import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
-
+    val context = LocalContext.current
 
     var usernameText by remember {
         mutableStateOf("")
@@ -100,9 +101,10 @@ fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPass
                 DefaultButton(modifier = Modifier.fillMaxWidth(0.9f), isEnabled = isButtonEnabled) {
                     AuthOperations.login(usernameText, passwordText) { authResult ->
                         if (authResult == AuthResults.Success) {
+                            Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
                             onClickLogin()
                         } else {
-
+                            Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
