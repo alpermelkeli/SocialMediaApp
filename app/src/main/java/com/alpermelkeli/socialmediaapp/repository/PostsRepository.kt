@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.repository
 
 import com.alpermelkeli.socialmediaapp.model.Post
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.runBlocking
 
@@ -23,7 +24,7 @@ class PostsRepository {
                     val images = document.get("images") as? List<String> ?: emptyList()
                     val likeCount = document.getLong("likeCount")?.toInt() ?: 100
                     val username = document.getString("username") ?: ""
-                    val profilePhoto = document.getString("profilePhoto") ?: ""
+                    val profilePhoto = document.getString("senderPhoto") ?: ""
                     Post(id,comments,likeCount,images,profilePhoto,username)
                 }
                 callBack(posts)
@@ -32,6 +33,30 @@ class PostsRepository {
                 callBack(emptyList())
             }
     }
+    fun getUserPosts(id: String, callBack: (List<Post>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("Posts")
+            .whereEqualTo("sender", id)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val posts = querySnapshot.documents.mapNotNull { document ->
+                    val comments = document.get("comments") as? List<String> ?: emptyList()
+                    val id = document.id
+                    val images = document.get("images") as? List<String> ?: emptyList()
+                    val likeCount = document.getLong("likeCount")?.toInt() ?: 100
+                    val username = document.getString("username") ?: ""
+                    val profilePhoto = document.getString("senderPhoto") ?: ""
+                    Post(id,comments,likeCount,images,profilePhoto,username)
+                }
+                callBack(posts)
+            }
+            .addOnFailureListener { exception ->
+                callBack(emptyList())
+                exception.printStackTrace()
+            }
+    }
+
 
 
 
