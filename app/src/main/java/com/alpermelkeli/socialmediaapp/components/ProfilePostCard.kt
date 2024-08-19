@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.alpermelkeli.socialmediaapp.model.Post
 
@@ -28,9 +29,12 @@ fun ProfilePostCard(post:Post,modifier: Modifier, onClickedPost:(Post)->Unit){
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Image(painter = rememberImagePainter(data = post.images[0]), contentDescription = "",
+            Image(
+                painter = rememberAsyncImagePainter(model = post.images[0]),
+                contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize())
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
     }

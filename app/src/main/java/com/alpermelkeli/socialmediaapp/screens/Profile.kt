@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
@@ -122,7 +123,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter = rememberImagePainter(data = user?.profilePhoto.toString()),
+                            painter = rememberAsyncImagePainter(model = user?.profilePhoto.toString()),
                             contentDescription = "",
                             modifier = Modifier
                                 .clip(CircleShape)
