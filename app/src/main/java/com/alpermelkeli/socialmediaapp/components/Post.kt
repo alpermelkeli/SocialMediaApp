@@ -27,11 +27,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,10 +48,23 @@ import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.model.Post
 import coil.compose.rememberImagePainter
+import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
 fun Post(post: Post){
+    val context = LocalContext.current.applicationContext as SocialMediaApplication
+
+    val postsViewModel = context.postsViewModel
+
+    LaunchedEffect(Unit) {
+       postsViewModel.getPostComments(post.id)
+    }
+
+    val comments by postsViewModel.comments.observeAsState()
+
+    val likeCount = post.likeCount
 
     val images = post.images
 
@@ -54,7 +72,7 @@ fun Post(post: Post){
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(470.dp),
+        .height(500.dp),
         horizontalAlignment = Alignment.CenterHorizontally){
 
         Row(
@@ -90,10 +108,6 @@ fun Post(post: Post){
                         textAlign = TextAlign.Start,
                         fontWeight = FontWeight.Bold)
 
-                    Text(text = "Tokyo, Japan",
-                        fontSize = 8.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        textAlign = TextAlign.Start)
                 }
 
             }
@@ -105,7 +119,9 @@ fun Post(post: Post){
         }
         //Edit pager state by values.
 
-        HorizontalPager(state = pagerState) {
+        HorizontalPager(state = pagerState, modifier = Modifier
+            .fillMaxWidth()
+            .height(360.dp) ) {
 
             Box(modifier = Modifier
                 .fillMaxWidth()
@@ -118,7 +134,11 @@ fun Post(post: Post){
 
             }
         }
-        Row(Modifier.fillMaxSize(),
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
 
@@ -133,23 +153,31 @@ fun Post(post: Post){
                     modifier = Modifier.size(35.dp),
                     tint = MaterialTheme.colorScheme.secondary)
                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon), contentDescription = "like",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(30.dp),
                     tint = MaterialTheme.colorScheme.secondary)
                 Icon(imageVector = Icons.Default.Send, contentDescription = "like",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(30.dp),
                     tint = MaterialTheme.colorScheme.secondary)
 
             }
 
-            Icon(imageVector = Icons.Default.FavoriteBorder,
+            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.save_button),
                 contentDescription = "save",
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(35.dp)
                     .padding(end = 10.dp),
                 tint = MaterialTheme.colorScheme.secondary)
 
         }
-
+        Text(text = "$likeCount Likes",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Start,
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(10.dp)
+        )
     }
 
 }

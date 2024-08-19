@@ -37,16 +37,16 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
-import com.alpermelkeli.socialmediaapp.fetchingPhoto.FetchPhotoUsingCam
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
+import com.alpermelkeli.socialmediaapp.utils.FetchUsingCamera
 import java.io.File
 import java.util.Date
 import java.util.Objects
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage() {
+fun HomePage(onCameraClicked:()->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
@@ -75,7 +75,6 @@ fun HomePage() {
 
 
 
-    var showCamera by remember { mutableStateOf(false) }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
@@ -95,7 +94,7 @@ fun HomePage() {
                     ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                 if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(context, "Permission granted", Toast.LENGTH_SHORT).show()
-                    showCamera = true
+                    onCameraClicked()
                 } else {
                     // Request a permission
                     permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -127,8 +126,6 @@ fun HomePage() {
         }
     }
 
-    if (showCamera){
-        FetchPhotoUsingCam(context)
-    }
+
 
 }

@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
@@ -49,6 +50,9 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         }
         composable(NavRoutes.Home.route){
             HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)})
+        }
+        composable(NavRoutes.Camera.route){
+            Camera()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.repository
 
 import android.util.Log
+import com.alpermelkeli.socialmediaapp.model.Comment
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,13 +21,12 @@ class PostsRepository {
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val posts = querySnapshot.documents.mapNotNull { document ->
-                    val comments = document.get("comments") as? List<String> ?: emptyList()
                     val id = document.id
                     val images = document.get("images") as? List<String> ?: emptyList()
                     val likeCount = document.getLong("likeCount")?.toInt() ?: 100
                     val username = document.getString("username") ?: ""
                     val profilePhoto = document.getString("senderPhoto") ?: ""
-                    Post(id,comments,likeCount,images,profilePhoto,username)
+                    Post(id,likeCount,images,profilePhoto,username)
                 }
                 callBack(posts)
             }
@@ -42,13 +42,12 @@ class PostsRepository {
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val posts = querySnapshot.documents.mapNotNull { document ->
-                    val comments = document.get("comments") as? List<String> ?: emptyList()
                     val id = document.id
                     val images = document.get("images") as? List<String> ?: emptyList()
                     val likeCount = document.getLong("likeCount")?.toInt() ?: 100
                     val username = document.getString("username") ?: ""
                     val profilePhoto = document.getString("senderPhoto") ?: ""
-                    Post(id,comments,likeCount,images,profilePhoto,username)
+                    Post(id,likeCount,images,profilePhoto,username)
                 }
                 callBack(posts)
             }
@@ -57,7 +56,6 @@ class PostsRepository {
                 exception.printStackTrace()
             }
     }
-
     fun uploadUserPost(post: Post) {
         val postCollection = db.collection("Posts")
         val postByUser = mapOf(
@@ -65,13 +63,29 @@ class PostsRepository {
             "sender" to post.id,
             "senderPhoto" to post.senderPhoto,
             "username" to post.senderUsername,
-            "comments" to post.comments,
             "likeCount" to post.likeCount
         )
 
         postCollection.add(postByUser)
             .addOnSuccessListener{
                 Log.d("uploadTask", "your upload task has been completed")
+            }
+    }
+    fun getPostComments(postId:String,callBack: (List<Comment>) -> Unit){
+        db.collection("Comments")
+            .whereEqualTo("postId",postId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val comments = querySnapshot.documents.mapNotNull { document ->
+                    val sender = document.getString("sender") ?: ""
+                    val createdAt = document.getLong("createdAt") ?: 0
+                    val content = document.getString("content") ?: ""
+                    Comment(sender,content,createdAt)
+                }
+                callBack(comments)
+            }
+            .addOnFailureListener {
+                callBack(emptyList())
             }
     }
 
