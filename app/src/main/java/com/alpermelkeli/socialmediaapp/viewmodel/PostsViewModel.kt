@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.alpermelkeli.socialmediaapp.model.Comment
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.PostsRepository
-import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class PostsViewModel(application: Application, private val postsRepository: PostsRepository) : AndroidViewModel(application) {
@@ -49,9 +49,9 @@ class PostsViewModel(application: Application, private val postsRepository: Post
         }
     }
 
-    fun uploadUserPost(post: Post){
+    fun uploadUserPost(post: Post, uri:Uri){
         viewModelScope.launch {
-            postsRepository.uploadPhotoStorage { url->
+            postsRepository.uploadPhotoStorage(post.senderId,uri) { url->
                 postsRepository.uploadUserPost(post.copy(images = listOf(url)))
             }
         }

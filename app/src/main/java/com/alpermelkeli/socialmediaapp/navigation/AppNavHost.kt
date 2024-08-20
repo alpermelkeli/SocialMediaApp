@@ -68,7 +68,8 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         }
 
         composable(NavRoutes.Camera.route){
-            Camera(onPhotoSaved = {navController.navigate("sendpost/${Uri.encode(it.toString())}")})
+            Camera(onPhotoSaved = {navController.navigate("sendpost/${Uri.encode(it.toString())}")},
+                onClickBack = {navController.popBackStack()})
         }
     }
 

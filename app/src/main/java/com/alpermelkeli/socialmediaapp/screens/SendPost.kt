@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,13 +26,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.DefaultTextField
+import com.alpermelkeli.socialmediaapp.model.Post
 
 @Composable
 fun SendPost(uri: String){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val postViewModel = context.postsViewModel
-
-
+    val userViewModel = context.userViewModel
+    val user by userViewModel.user.observeAsState()
     var descriptionText by remember{ mutableStateOf("") }
     val photoUri: Uri = Uri.parse(uri)
     Box(modifier = Modifier
@@ -50,7 +52,7 @@ fun SendPost(uri: String){
             DefaultTextField(placeHolder = "Description", value = descriptionText, visibility = true) {
                 descriptionText = it
             }
-            Button(onClick = { /*postViewModel.uploadUserPost()*/ },
+            Button(onClick = { postViewModel.uploadUserPost(Post(user!!.id,0, emptyList(),user!!.profilePhoto,user!!.username, System.currentTimeMillis()), photoUri) },
                 Modifier.fillMaxWidth()) {
                 Text(text = "Send photo")
             }

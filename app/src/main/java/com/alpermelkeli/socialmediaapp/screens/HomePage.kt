@@ -93,7 +93,6 @@ fun HomePage(onCameraClicked:()->Unit) {
                 val permissionCheckResult =
                     ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                 if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(context, "Permission granted", Toast.LENGTH_SHORT).show()
                     onCameraClicked()
                 } else {
                     // Request a permission

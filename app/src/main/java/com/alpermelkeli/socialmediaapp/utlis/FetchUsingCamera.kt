@@ -71,7 +71,7 @@ fun CameraPreview(
                         imageCapture
                     )
                 } catch (e: Exception) {
-                    Log.e("CameraPreview", "Kamera başlatılamadı: ${e.message}")
+                    Log.e("CameraPreview", "Camera couldn't started: ${e.message}")
                 }
             }, executor)
             previewView
