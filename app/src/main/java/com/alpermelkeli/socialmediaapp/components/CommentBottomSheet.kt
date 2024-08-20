@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -18,14 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.model.Comment
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentBottomSheet(postId:String,comments:List<Comment>, sheetState: SheetState, onDismissRequest:()->Unit) {
+    val scope = rememberCoroutineScope()
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
-    val postViewModel = context.postsViewModel
+    val commentViewModel = context.commentsViewModel
 
     val userViewModel = context.userViewModel
 
@@ -36,13 +39,16 @@ fun CommentBottomSheet(postId:String,comments:List<Comment>, sheetState: SheetSt
     val sendComment = {
         user?.let {
             val newComment = Comment(it.id,it.profilePhoto,it.username,commentText,System.currentTimeMillis())
-            postViewModel.sendComment(postId,newComment)
+            commentViewModel.sendComment(postId,newComment)
         }
     }
 
     ModalBottomSheet(onDismissRequest = { onDismissRequest() },
         sheetState = sheetState) {
-        Column(Modifier.fillMaxHeight()) {
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .imePadding()) {
             LazyColumn(Modifier.fillMaxHeight(0.8f)) {
                 item {
                     Box(
@@ -64,6 +70,7 @@ fun CommentBottomSheet(postId:String,comments:List<Comment>, sheetState: SheetSt
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 DefaultTextField(placeHolder = "Write a comment", value = commentText, visibility = true) {
+                    scope.launch {sheetState.expand()}
                     commentText = it
                 }
                 Button(onClick = {sendComment()},
