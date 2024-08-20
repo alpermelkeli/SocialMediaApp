@@ -8,5 +8,6 @@ sealed class NavRoutes(val route:String){
     object Home : NavRoutes("home")
     object UserPost : NavRoutes("userpost/{id}")
     object Camera : NavRoutes("camera")
+    object SendPost : NavRoutes("sendpost/{uri}")
 
 }

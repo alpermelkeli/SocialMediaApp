@@ -7,7 +7,9 @@ import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,44 +22,41 @@ import java.util.*
 @Composable
 fun FetchUsingCamera(
     onUseCaseCreated: (ImageCapture) -> Unit,
-    onImageCaptured: (Uri) -> Unit
+    cameraSelector: CameraSelector
 ) {
     val context = LocalContext.current
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
-
     CameraPreview(
         context = context,
+        cameraSelector = cameraSelector,
         onUseCaseCreated = { useCase ->
             imageCapture = useCase
             onUseCaseCreated(useCase) // Pass the ImageCapture instance back to the caller
-        },
-        onImageCaptured = onImageCaptured
+        }
     )
 
     // If imageCapture is not null, it means the CameraPreview was successfully set up
     LaunchedEffect(imageCapture) {
         // ImageCapture is available to be used
     }
+
 }
 
 @Composable
 fun CameraPreview(
     context: Context,
-    onUseCaseCreated: (ImageCapture) -> Unit,
-    onImageCaptured: (Uri) -> Unit
+    cameraSelector: CameraSelector,
+    onUseCaseCreated: (ImageCapture) -> Unit
 ) {
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
         factory = { ctx ->
             val previewView = PreviewView(ctx)
             val executor = ContextCompat.getMainExecutor(ctx)
             cameraProviderFuture.addListener({
                 val cameraProvider = cameraProviderFuture.get()
                 val preview = Preview.Builder().build()
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
                 val imageCapture = ImageCapture.Builder().build()
                 onUseCaseCreated(imageCapture)
 

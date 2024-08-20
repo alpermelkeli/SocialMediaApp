@@ -71,6 +71,9 @@ class PostsRepository {
                 Log.d("uploadTask", "your upload task has been completed")
             }
     }
+    fun uploadPhotoStorage(callBack: (String) -> Unit){
+         //it will return url of the uploaded photo
+    }
     fun getPostComments(postId:String,callBack: (List<Comment>) -> Unit){
         db.collection("Comments")
             .whereEqualTo("postId",postId)

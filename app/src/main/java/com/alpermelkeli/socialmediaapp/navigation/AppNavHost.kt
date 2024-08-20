@@ -1,5 +1,6 @@
 package com.alpermelkeli.socialmediaapp.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -10,6 +11,7 @@ import androidx.navigation.navArgument
 import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
+import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.SignUp
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
@@ -45,14 +47,28 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
                 UserPost(postIndex = it.toInt(), onBackClicked = { navController.popBackStack() })
             }
         }
+
+        composable(route = NavRoutes.SendPost.route,
+            arguments = listOf(navArgument("uri"){
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val imageUri = backStackEntry.arguments?.getString("uri")
+            imageUri?.let {
+                SendPost(imageUri)
+            }
+        }
+
         composable(NavRoutes.SignUp.route){
             SignUp()
         }
+
         composable(NavRoutes.Home.route){
             HomeNavContainer(initialTab = initialTab, onNavigate = {navController.navigate(it)})
         }
+
         composable(NavRoutes.Camera.route){
-            Camera()
+            Camera(onPhotoSaved = {navController.navigate("sendpost/${Uri.encode(it.toString())}")})
         }
     }
 
