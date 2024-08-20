@@ -26,8 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
 
+
 @Composable
-fun HomePageTopBar(isDark:Boolean, onClickMessages:()->Unit, onClickCamera:()->Unit){
+fun HomePageTopBar(isDark:Boolean, onClickMessages:()->Unit, onClickCamera: ()-> Unit){
     Box(
         Modifier
             .fillMaxWidth()

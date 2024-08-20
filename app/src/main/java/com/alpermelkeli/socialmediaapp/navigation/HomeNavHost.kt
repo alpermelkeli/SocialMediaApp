@@ -17,7 +17,7 @@ fun HomeNavHost(navController: NavHostController,
 
     NavHost(navController = navController, startDestination = startDestination.route) {
         composable(HomeRoutes.HomePage.route){
-            HomePage()
+            HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)})
         }
         composable(HomeRoutes.Profile.route){
             Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it")})

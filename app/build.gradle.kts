@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.camera:camera-core:1.1.0")
+    implementation ("androidx.camera:camera-camera2:1.1.0")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
     implementation (libs.converter.gson)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -70,6 +73,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.camera.view)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

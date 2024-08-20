@@ -1,13 +1,14 @@
 package com.alpermelkeli.socialmediaapp.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.alpermelkeli.socialmediaapp.model.Comment
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.PostsRepository
-import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class PostsViewModel(application: Application, private val postsRepository: PostsRepository) : AndroidViewModel(application) {
@@ -19,6 +20,10 @@ class PostsViewModel(application: Application, private val postsRepository: Post
     private val _userPosts : MutableLiveData<List<Post>> = MutableLiveData()
 
     val userPosts : LiveData<List<Post>> get() = _userPosts
+
+    private val _comments : MutableLiveData<List<Comment>> = MutableLiveData()
+
+    val comments : LiveData<List<Comment>> get() = _comments
 
     fun getUserHomePagePosts(followings:List<String>){
         viewModelScope.launch {
@@ -36,10 +41,19 @@ class PostsViewModel(application: Application, private val postsRepository: Post
         }
     }
 
-
-    fun uploadUserPost(post: Post){
+    fun getPostComments(postId:String){
         viewModelScope.launch {
-            postsRepository.uploadUserPost(post)
+            postsRepository.getPostComments(postId){
+                _comments.postValue(it)
+            }
+        }
+    }
+
+    fun uploadUserPost(post: Post, uri:Uri){
+        viewModelScope.launch {
+            postsRepository.uploadPhotoStorage(post.senderId,uri) { url->
+                postsRepository.uploadUserPost(post.copy(images = listOf(url)))
+            }
         }
     }
 
