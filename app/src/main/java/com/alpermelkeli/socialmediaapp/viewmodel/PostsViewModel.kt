@@ -25,6 +25,7 @@ class PostsViewModel(application: Application, private val postsRepository: Post
 
     val comments : LiveData<List<Comment>> get() = _comments
 
+
     fun getUserHomePagePosts(followings:List<String>){
         viewModelScope.launch {
             postsRepository.getUserHomePagePosts(followings){
@@ -48,8 +49,14 @@ class PostsViewModel(application: Application, private val postsRepository: Post
             }
         }
     }
+    fun sendComment(postId: String, comment: Comment){
+        viewModelScope.launch {
+            postsRepository.sendComment(postId,comment)
+            getPostComments(postId)
+        }
+    }
 
-    fun uploadUserPost(post: Post, uri:Uri){
+    fun uploadPost(post: Post, uri:Uri){
         viewModelScope.launch {
             postsRepository.uploadPhotoStorage(post.senderId,uri) { url->
                 postsRepository.uploadUserPost(post.copy(images = listOf(url)))

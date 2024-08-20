@@ -2,48 +2,43 @@ package com.alpermelkeli.socialmediaapp.screens
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
-import android.icu.text.SimpleDateFormat
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import coil.compose.rememberImagePainter
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
+import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
-import com.alpermelkeli.socialmediaapp.utils.FetchUsingCamera
-import java.io.File
-import java.util.Date
-import java.util.Objects
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(onCameraClicked:()->Unit) {
@@ -54,6 +49,9 @@ fun HomePage(onCameraClicked:()->Unit) {
 
     val postViewModel = context.postsViewModel
     val homePagePosts by postViewModel.homePagePosts.observeAsState(emptyList())
+    val comments by postViewModel.comments.observeAsState(emptyList())
+
+    var selectedPost by remember{ mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         userViewModel.getUser(AuthOperations.getUser()?.uid.toString())
@@ -63,7 +61,18 @@ fun HomePage(onCameraClicked:()->Unit) {
     LaunchedEffect(user) {
         user?.following?.let { postViewModel.getUserHomePagePosts(it) }
     }
+    var isCommentSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
 
+
+    val commentSheetState = rememberModalBottomSheetState()
+
+    val onClickedComment = {post: Post ->
+        isCommentSheetOpen = true
+        selectedPost = post.postId
+        postViewModel.getPostComments(post.postId)
+    }
 
     val isDark = isSystemInDarkTheme()
 
@@ -119,8 +128,13 @@ fun HomePage(onCameraClicked:()->Unit) {
                 }
 
                 items(homePagePosts) {
-                    Post(post = it)
+                    Post(post = it){
+                        onClickedComment(it)
+                    }
                 }
+            }
+            if(isCommentSheetOpen){
+                CommentBottomSheet(selectedPost,comments = comments, sheetState = commentSheetState, onDismissRequest = {isCommentSheetOpen = false})
             }
         }
     }

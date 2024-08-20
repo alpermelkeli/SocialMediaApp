@@ -3,6 +3,7 @@ package com.alpermelkeli.socialmediaapp.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
@@ -26,9 +27,9 @@ fun DefaultTextField(placeHolder:String,value:String, visibility: Boolean, onVal
         onValueChange = {onValueChange(it)},
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Color.LightGray,
-            containerColor = Grey20,
-            unfocusedTextColor = Black50,
-            focusedTextColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.background,
+            unfocusedTextColor = MaterialTheme.colorScheme.secondary,
+            focusedTextColor = MaterialTheme.colorScheme.secondary,
             cursorColor = Black50,
             focusedBorderColor = Color.DarkGray,
             disabledBorderColor = Color.LightGray

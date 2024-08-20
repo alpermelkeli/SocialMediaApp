@@ -14,26 +14,49 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.Post
+import com.alpermelkeli.socialmediaapp.model.Post
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     val columnScrollState = rememberLazyListState()
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val postViewModel = context.postsViewModel
     val userPosts by postViewModel.userPosts.observeAsState(emptyList())
+    val commentSheetState = rememberModalBottomSheetState()
+
+    val comments by postViewModel.comments.observeAsState(emptyList())
+
+    var selectedPost by remember{ mutableStateOf("") }
+
+    var isCommentSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val onClickedComment= {post:Post ->
+        isCommentSheetOpen = true
+        selectedPost = post.postId
+        postViewModel.getPostComments(post.postId)
+    }
 
     LaunchedEffect(Unit) {
         columnScrollState.scrollToItem(postIndex)
@@ -62,8 +85,13 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
             state = columnScrollState) {
 
             items(userPosts){
-                Post(post = it)
+                Post(post = it){
+                    onClickedComment(it)
+                }
             }
+        }
+        if(isCommentSheetOpen){
+            CommentBottomSheet(selectedPost,comments = comments, sheetState = commentSheetState, onDismissRequest = {isCommentSheetOpen = false})
         }
     }
 

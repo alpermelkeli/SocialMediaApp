@@ -2,6 +2,7 @@ package com.alpermelkeli.socialmediaapp.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,16 +48,7 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
-fun Post(post: Post){
-    val context = LocalContext.current.applicationContext as SocialMediaApplication
-
-    val postsViewModel = context.postsViewModel
-
-    LaunchedEffect(Unit) {
-       postsViewModel.getPostComments(post.senderId)
-    }
-
-    val comments by postsViewModel.comments.observeAsState()
+fun Post(post: Post, onClickedComment:()->Unit){
 
     val likeCount = post.likeCount
 
@@ -147,7 +139,7 @@ fun Post(post: Post){
                     modifier = Modifier.size(35.dp),
                     tint = MaterialTheme.colorScheme.secondary)
                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon), contentDescription = "like",
-                    modifier = Modifier.size(30.dp),
+                    modifier = Modifier.size(30.dp).clickable { onClickedComment() },
                     tint = MaterialTheme.colorScheme.secondary)
                 Icon(imageVector = Icons.Default.Send, contentDescription = "like",
                     modifier = Modifier.size(30.dp),
