@@ -7,6 +7,5 @@ import androidx.navigation.compose.rememberNavController
 fun MainNavContainer(startDestination: String, initialTab: HomeRoutes){
     val navController = rememberNavController()
 
-
     AppNavHost(navController = navController, startDestination = startDestination, initialTab = initialTab)
 }

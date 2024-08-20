@@ -21,10 +21,6 @@ class PostsViewModel(application: Application, private val postsRepository: Post
 
     val userPosts : LiveData<List<Post>> get() = _userPosts
 
-    private val _comments : MutableLiveData<List<Comment>> = MutableLiveData()
-
-    val comments : LiveData<List<Comment>> get() = _comments
-
 
     fun getUserHomePagePosts(followings:List<String>){
         viewModelScope.launch {
@@ -42,19 +38,6 @@ class PostsViewModel(application: Application, private val postsRepository: Post
         }
     }
 
-    fun getPostComments(postId:String){
-        viewModelScope.launch {
-            postsRepository.getPostComments(postId){
-                _comments.postValue(it)
-            }
-        }
-    }
-    fun sendComment(postId: String, comment: Comment){
-        viewModelScope.launch {
-            postsRepository.sendComment(postId,comment)
-            getPostComments(postId)
-        }
-    }
 
     fun uploadPost(post: Post, uri:Uri){
         viewModelScope.launch {

@@ -42,10 +42,11 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     val columnScrollState = rememberLazyListState()
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val postViewModel = context.postsViewModel
+    val commentViewModel = context.commentsViewModel
     val userPosts by postViewModel.userPosts.observeAsState(emptyList())
     val commentSheetState = rememberModalBottomSheetState()
 
-    val comments by postViewModel.comments.observeAsState(emptyList())
+    val comments by commentViewModel.comments.observeAsState(emptyList())
 
     var selectedPost by remember{ mutableStateOf("") }
 
@@ -55,7 +56,7 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     val onClickedComment= {post:Post ->
         isCommentSheetOpen = true
         selectedPost = post.postId
-        postViewModel.getPostComments(post.postId)
+        commentViewModel.getPostComments(post.postId)
     }
 
     LaunchedEffect(Unit) {

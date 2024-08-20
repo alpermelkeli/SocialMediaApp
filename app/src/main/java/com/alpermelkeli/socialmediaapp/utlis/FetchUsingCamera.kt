@@ -95,7 +95,7 @@ fun takePhoto(
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onError(exc: ImageCaptureException) {
-                Log.e("CameraX", "Fotoğraf çekme hatası: ${exc.message}", exc)
+                Log.e("CameraX", "Error: ${exc.message}", exc)
             }
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {

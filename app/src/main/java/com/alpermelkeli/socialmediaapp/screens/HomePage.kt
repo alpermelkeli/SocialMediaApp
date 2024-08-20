@@ -49,7 +49,10 @@ fun HomePage(onCameraClicked:()->Unit) {
 
     val postViewModel = context.postsViewModel
     val homePagePosts by postViewModel.homePagePosts.observeAsState(emptyList())
-    val comments by postViewModel.comments.observeAsState(emptyList())
+
+    val commentViewModel = context.commentsViewModel
+
+    val comments by commentViewModel.comments.observeAsState(emptyList())
 
     var selectedPost by remember{ mutableStateOf("") }
 
@@ -71,7 +74,7 @@ fun HomePage(onCameraClicked:()->Unit) {
     val onClickedComment = {post: Post ->
         isCommentSheetOpen = true
         selectedPost = post.postId
-        postViewModel.getPostComments(post.postId)
+        commentViewModel.getPostComments(post.postId)
     }
 
     val isDark = isSystemInDarkTheme()
