@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
@@ -27,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -43,80 +45,134 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
-import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.model.Like
+import com.alpermelkeli.socialmediaapp.model.Post
+import java.util.UUID
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Post(post: Post, onClickedComment:()->Unit){
+fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Unit) {
+    val context = LocalContext.current.applicationContext as SocialMediaApplication
+    val userViewModel = context.userViewModel
 
-    val likeCount = post.likeCount
+    val user by userViewModel.user.observeAsState()
+
+    val likesViewModel = context.likesViewModel
+
+    val likesMap by likesViewModel.likesMap.collectAsState()
+
+    val likes = likesMap[post.postId] ?: emptyList()
+
+    val isLiked = likes.any { it.userId == user?.id }
+
+
+    LaunchedEffect(Unit) {
+        likesViewModel.fetchPostLikes(post.postId)
+    }
+
+    val onClickedLike = {
+        if(!isLiked){
+            val uuid = UUID.randomUUID()
+            val likeDetails = Like(uuid.toString(),post.postId, user!!.id, System.currentTimeMillis())
+            likesViewModel.updateLike(post.postId, likeDetails)
+        }
+        else{
+            for (like in likes){
+                if(like.userId==post.senderId){
+                    likesViewModel.removeLike(post.postId, like.likeId)
+                }
+            }
+        }
+    }
 
     val images = post.images
 
-    val pagerState = rememberPagerState{images.size}
+    val pagerState = rememberPagerState { images.size }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .height(500.dp),
-        horizontalAlignment = Alignment.CenterHorizontally){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(500.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
         Row(
             Modifier
                 .fillMaxWidth()
                 .height(60.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween){
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-            Row(modifier = Modifier
-                .fillMaxHeight()
-                .width(120.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(120.dp)
+                    .clickable { onClickedProfile(post.senderId) },
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically){
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                
-                Image(painter = rememberAsyncImagePainter(model = post.senderPhoto), contentDescription = "photo",
+
+                Image(
+                    painter = rememberAsyncImagePainter(model = post.senderPhoto),
+                    contentDescription = "photo",
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape))
+                        .clip(CircleShape)
+                )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Column(horizontalAlignment = Alignment.Start,
+                Column(
+                    horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.height(25.dp)) {
+                    modifier = Modifier.height(25.dp)
+                ) {
 
-                    Text(text = post.senderUsername,
+                    Text(
+                        text = post.senderUsername,
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
 
                 }
 
             }
 
-            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "options",
+            Icon(
+                imageVector = Icons.Default.MoreVert, contentDescription = "options",
                 Modifier.padding(end = 10.dp),
-                tint = MaterialTheme.colorScheme.secondary)
+                tint = MaterialTheme.colorScheme.secondary
+            )
 
         }
         //Edit pager state by values.
 
-        HorizontalPager(state = pagerState, modifier = Modifier
-            .fillMaxWidth()
-            .height(360.dp) ) {
-
-            Box(modifier = Modifier
+        HorizontalPager(
+            state = pagerState, modifier = Modifier
                 .fillMaxWidth()
-                .height(360.dp),
-                contentAlignment = Alignment.Center) {
+                .height(360.dp)
+        ) {
 
-                Image(painter = rememberAsyncImagePainter(model = images[it]), contentDescription = "image",
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(360.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Image(
+                    painter = rememberAsyncImagePainter(model = images[it]),
+                    contentDescription = "image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop)
+                    contentScale = ContentScale.Crop
+                )
 
             }
         }
@@ -126,7 +182,8 @@ fun Post(post: Post, onClickedComment:()->Unit){
                 .fillMaxWidth()
                 .height(40.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
             Row(
                 Modifier
@@ -134,28 +191,43 @@ fun Post(post: Post, onClickedComment:()->Unit){
                     .fillMaxHeight()
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically){
-                Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "like",
-                    modifier = Modifier.size(35.dp),
-                    tint = MaterialTheme.colorScheme.secondary)
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon), contentDescription = "like",
-                    modifier = Modifier.size(30.dp).clickable { onClickedComment() },
-                    tint = MaterialTheme.colorScheme.secondary)
-                Icon(imageVector = Icons.Default.Send, contentDescription = "like",
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    "",
+                    modifier = Modifier
+                        .size(35.dp)
+                        .clickable { onClickedLike() },
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
+                    contentDescription = "like",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { onClickedComment() },
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+                Icon(
+                    imageVector = Icons.Default.Send, contentDescription = "like",
                     modifier = Modifier.size(30.dp),
-                    tint = MaterialTheme.colorScheme.secondary)
-
+                    tint = MaterialTheme.colorScheme.secondary
+                )
             }
 
-            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.save_button),
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.save_button),
                 contentDescription = "save",
                 modifier = Modifier
                     .size(35.dp)
                     .padding(end = 10.dp),
-                tint = MaterialTheme.colorScheme.secondary)
+                tint = MaterialTheme.colorScheme.secondary
+            )
 
         }
-        Text(text = "$likeCount Likes",
+        Text(
+            text = "${likes.size} Likes",
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,

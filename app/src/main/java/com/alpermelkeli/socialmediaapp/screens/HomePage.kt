@@ -34,6 +34,7 @@ import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
+import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
@@ -41,7 +42,7 @@ import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
@@ -53,7 +54,7 @@ fun HomePage(onCameraClicked:()->Unit) {
     val commentViewModel = context.commentsViewModel
 
     val comments by commentViewModel.comments.observeAsState(emptyList())
-
+    println(user?.username)
     var selectedPost by remember{ mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -70,6 +71,7 @@ fun HomePage(onCameraClicked:()->Unit) {
 
 
     val commentSheetState = rememberModalBottomSheetState()
+
 
     val onClickedComment = {post: Post ->
         isCommentSheetOpen = true
@@ -131,9 +133,12 @@ fun HomePage(onCameraClicked:()->Unit) {
                 }
 
                 items(homePagePosts) {
-                    Post(post = it){
-                        onClickedComment(it)
-                    }
+                    Post(post = it,
+                        onClickedComment = { onClickedComment(it) },
+                        onClickedProfile = {id -> onClickedPostProfile(id)}
+                    )
+
+
                 }
             }
             if(isCommentSheetOpen){

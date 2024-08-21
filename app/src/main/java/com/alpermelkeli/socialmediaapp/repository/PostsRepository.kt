@@ -27,11 +27,10 @@ class PostsRepository {
                     val postId = document.id
                     val sender = document.getString("sender") ?: ""
                     val images = document.get("images") as? List<String> ?: emptyList()
-                    val likeCount = document.getLong("likeCount")?.toInt() ?: 100
                     val username = document.getString("username") ?: ""
                     val profilePhoto = document.getString("senderPhoto") ?: ""
                     val timestamp = document.getLong("timestamp") ?: 0
-                    Post(postId,sender,likeCount,images,profilePhoto,username,timestamp)
+                    Post(postId,sender,images,profilePhoto,username,timestamp)
                 }
                 val sortedPosts = posts.sortedByDescending { it.timestamp }
                 callBack(sortedPosts)
@@ -51,12 +50,11 @@ class PostsRepository {
                     val postId = document.id
                     val sender = document.getString("sender") ?: ""
                     val images = document.get("images") as? List<String> ?: emptyList()
-                    val likeCount = document.getLong("likeCount")?.toInt() ?: 100
                     val username = document.getString("username") ?: ""
                     val profilePhoto = document.getString("senderPhoto") ?: ""
                     val timestamp = document.getLong("timestamp") ?: 0
 
-                    Post(postId,sender,likeCount,images,profilePhoto,username,timestamp)
+                    Post(postId,sender,images,profilePhoto,username,timestamp)
                 }
                 val sortedPosts = posts.sortedByDescending { it.timestamp }
                 callBack(sortedPosts)
@@ -73,7 +71,6 @@ class PostsRepository {
             "sender" to post.senderId,
             "senderPhoto" to post.senderPhoto,
             "username" to post.senderUsername,
-            "likeCount" to post.likeCount,
             "timestamp" to post.timestamp
         )
 
@@ -94,43 +91,6 @@ class PostsRepository {
         }.addOnFailureListener {
             //error
         }
-    }
-
-    fun sendComment(postId:String, comment: Comment){
-        val commentsCollection = db.collection("Comments")
-        val commentByUser = mapOf(
-            "content" to comment.content,
-            "createdAt" to comment.createdAt,
-            "postId" to postId,
-            "sender" to comment.senderId,
-            "senderPhoto" to comment.senderPhoto,
-            "senderUsername" to comment.senderUsername
-        )
-        commentsCollection.add(commentByUser)
-            .addOnSuccessListener {
-                Log.d("commentTask","successfully")
-            }
-
-    }
-
-    fun getPostComments(postId:String,callBack: (List<Comment>) -> Unit){
-        db.collection("Comments")
-            .whereEqualTo("postId",postId)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val comments = querySnapshot.documents.mapNotNull { document ->
-                    val sender = document.getString("sender") ?: ""
-                    val senderPhoto = document.getString("senderPhoto") ?: ""
-                    val senderUsername = document.getString("senderUsername") ?: ""
-                    val createdAt = document.getLong("createdAt") ?: 0
-                    val content = document.getString("content") ?: ""
-                    Comment(sender,senderPhoto,senderUsername,content,createdAt)
-                }
-                callBack(comments)
-            }
-            .addOnFailureListener {
-                callBack(emptyList())
-            }
     }
 
 }

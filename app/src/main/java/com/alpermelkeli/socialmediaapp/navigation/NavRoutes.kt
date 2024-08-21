@@ -6,8 +6,9 @@ sealed class NavRoutes(val route:String){
     object LoginWithField : NavRoutes("loginwithfield")
     object SignUp : NavRoutes("signup")
     object Home : NavRoutes("home")
-    object UserPost : NavRoutes("userpost/{id}")
+    object UserPost : NavRoutes("userpost/{index}/{isTarget}")
     object Camera : NavRoutes("camera")
     object SendPost : NavRoutes("sendpost/{uri}")
+    object TargetProfile : NavRoutes("targetprofile/{userId}")
 
 }

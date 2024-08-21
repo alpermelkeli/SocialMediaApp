@@ -1,9 +1,9 @@
 package com.alpermelkeli.socialmediaapp.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,16 +33,23 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.Post
+import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserPost(postIndex:Int, onBackClicked:()->Unit){
+fun UserPost(postIndex:Int, isTarget:Boolean, onBackClicked:()->Unit,onClickedPostProfile:(userId:String)->Unit){
+
     val columnScrollState = rememberLazyListState()
+
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
     val postViewModel = context.postsViewModel
+
     val commentViewModel = context.commentsViewModel
-    val userPosts by postViewModel.userPosts.observeAsState(emptyList())
+
+    val userPosts by if(isTarget) postViewModel.targetUserPost.observeAsState(emptyList()) else postViewModel.userPosts.observeAsState(emptyList())
+
     val commentSheetState = rememberModalBottomSheetState()
 
     val comments by commentViewModel.comments.observeAsState(emptyList())
@@ -53,6 +59,8 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     var isCommentSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
+
+
     val onClickedComment= {post:Post ->
         isCommentSheetOpen = true
         selectedPost = post.postId
@@ -62,8 +70,10 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     LaunchedEffect(Unit) {
         columnScrollState.scrollToItem(postIndex)
     }
-    Box(Modifier.fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)) {
         Row(
             Modifier
                 .fillMaxWidth()
@@ -86,9 +96,11 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
             state = columnScrollState) {
 
             items(userPosts){
-                Post(post = it){
-                    onClickedComment(it)
-                }
+                Post(post = it,
+                    onClickedComment = { onClickedComment(it) },
+                    onClickedProfile = {id -> onClickedPostProfile(id)}
+                )
+
             }
         }
         if(isCommentSheetOpen){

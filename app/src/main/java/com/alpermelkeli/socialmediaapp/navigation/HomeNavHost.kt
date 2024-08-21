@@ -17,13 +17,13 @@ fun HomeNavHost(navController: NavHostController,
 
     NavHost(navController = navController, startDestination = startDestination.route) {
         composable(HomeRoutes.HomePage.route){
-            HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)})
+            HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)}, onClickedPostProfile = {onNavigate("targetprofile/$it")})
         }
         composable(HomeRoutes.Profile.route){
-            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it")})
+            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it/false")})
         }
         composable(HomeRoutes.Search.route){
-            Search()
+            Search(onUserItemClicked = {onNavigate("targetprofile" + "/$it")})
         }
     }
 }
