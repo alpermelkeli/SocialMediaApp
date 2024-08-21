@@ -15,12 +15,20 @@ class UserViewModel(application: Application, private val userRepository: UserRe
 
     val user : LiveData<User> get() = _user
 
+    private val _searchResults: MutableLiveData<List<User>> = MutableLiveData()
+
+    val searchResults: LiveData<List<User>> get() = _searchResults
 
     fun getUser(id:String){
         viewModelScope.launch {
             userRepository.getUserDocument(id){
              _user.postValue(it)
             }
+        }
+    }
+    fun searchUsers(username: String) {
+        userRepository.searchUsersByUsername(username) { users ->
+            _searchResults.postValue(users)
         }
     }
 
