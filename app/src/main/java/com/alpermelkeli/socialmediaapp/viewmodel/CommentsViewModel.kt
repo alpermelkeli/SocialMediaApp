@@ -29,5 +29,4 @@ class CommentsViewModel(application: Application, private val commentsRepository
             getPostComments(postId)
         }
     }
-
 }
