@@ -1,9 +1,9 @@
 package com.alpermelkeli.socialmediaapp.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.Post
+import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,9 +43,14 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val postViewModel = context.postsViewModel
     val commentViewModel = context.commentsViewModel
+    val likesViewModel = context.likesViewModel
     val userPosts by postViewModel.userPosts.observeAsState(emptyList())
     val commentSheetState = rememberModalBottomSheetState()
 
+    val userViewModel = context.userViewModel
+    val user by userViewModel.user.observeAsState()
+
+    val likes by likesViewModel.like.observeAsState(emptyList())
     val comments by commentViewModel.comments.observeAsState(emptyList())
 
     var selectedPost by remember{ mutableStateOf("") }
@@ -53,6 +58,23 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     var isCommentSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val onClickedLike = {post: Post ->
+        user?.let{
+            val likeDetails = Like(post.postId, post.senderId, System.currentTimeMillis())
+            var clickCount = 0
+            for (id in it.id){
+                if (clickCount == 0){
+                    selectedPost = post.postId
+                    likesViewModel.updateLike(post.postId, likeDetails)
+                    likesViewModel.getPostLikes(post.postId)
+                    clickCount++
+                }else {
+                }
+            }
+        }
+    }
+
     val onClickedComment= {post:Post ->
         isCommentSheetOpen = true
         selectedPost = post.postId
@@ -62,8 +84,10 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
     LaunchedEffect(Unit) {
         columnScrollState.scrollToItem(postIndex)
     }
-    Box(Modifier.fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)) {
         Row(
             Modifier
                 .fillMaxWidth()
@@ -86,9 +110,13 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
             state = columnScrollState) {
 
             items(userPosts){
-                Post(post = it){
-                    onClickedComment(it)
-                }
+                Post(post = it,
+                    onClickedComment = { onClickedComment(it) },
+                    onClickedLike = { onClickedLike(it)
+                        Toast.makeText(context, "You post has been liked", Toast.LENGTH_SHORT).show()
+                    }
+                )
+
             }
         }
         if(isCommentSheetOpen){
