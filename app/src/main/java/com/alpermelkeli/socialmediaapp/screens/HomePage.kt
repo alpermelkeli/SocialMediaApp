@@ -42,7 +42,7 @@ import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
@@ -135,7 +135,7 @@ fun HomePage(onCameraClicked:()->Unit) {
                 items(homePagePosts) {
                     Post(post = it,
                         onClickedComment = { onClickedComment(it) },
-
+                        onClickedProfile = {id -> onClickedPostProfile(id)}
                     )
 
 

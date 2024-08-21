@@ -52,7 +52,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Post(post: Post, onClickedComment: () -> Unit) {
+fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val userViewModel = context.userViewModel
 
@@ -108,7 +108,8 @@ fun Post(post: Post, onClickedComment: () -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(120.dp),
+                    .width(120.dp)
+                    .clickable { onClickedProfile(post.senderId) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

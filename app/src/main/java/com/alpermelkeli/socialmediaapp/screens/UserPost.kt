@@ -38,7 +38,7 @@ import com.alpermelkeli.socialmediaapp.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserPost(postIndex:Int, isTarget:Boolean, onBackClicked:()->Unit){
+fun UserPost(postIndex:Int, isTarget:Boolean, onBackClicked:()->Unit,onClickedPostProfile:(userId:String)->Unit){
 
     val columnScrollState = rememberLazyListState()
 
@@ -98,7 +98,7 @@ fun UserPost(postIndex:Int, isTarget:Boolean, onBackClicked:()->Unit){
             items(userPosts){
                 Post(post = it,
                     onClickedComment = { onClickedComment(it) },
-
+                    onClickedProfile = {id -> onClickedPostProfile(id)}
                 )
 
             }

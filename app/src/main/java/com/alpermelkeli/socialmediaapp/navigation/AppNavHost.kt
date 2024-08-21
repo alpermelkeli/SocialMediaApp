@@ -2,7 +2,6 @@ package com.alpermelkeli.socialmediaapp.navigation
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,8 +14,6 @@ import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.SignUp
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
-import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
-import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @Composable
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
@@ -49,7 +46,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
             val isTarget = backStackEntry.arguments?.getBoolean("isTarget")
             postIndex?.let {postIndex->
                 isTarget?.let {
-                    UserPost(postIndex = postIndex.toInt(), isTarget = it, onBackClicked = { navController.popBackStack() })
+                    UserPost(postIndex = postIndex.toInt(), isTarget = it, onBackClicked = { navController.popBackStack() }, onClickedPostProfile = {navController.navigate("targetprofile/$it")})
                 }
             }
         }
