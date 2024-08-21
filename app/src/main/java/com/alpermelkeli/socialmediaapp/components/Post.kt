@@ -78,10 +78,10 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
             likesViewModel.updateLike(post.postId, likeDetails)
         }
         else{
-            for (like in likes){
-                if(like.userId==post.senderId){
-                    likesViewModel.removeLike(post.postId, like.likeId)
-                }
+
+            val likeToRemove = likes.find { it.userId == user!!.id }
+            likeToRemove?.let {
+                likesViewModel.removeLike(it.postId, it.likeId)
             }
         }
     }
