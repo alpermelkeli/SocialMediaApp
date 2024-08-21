@@ -40,7 +40,7 @@ fun SendPost(uri: String, onPostSent:()->Unit){
     val sendPost = {
         user?.let {
             val uuid = UUID.randomUUID()
-            val newPost = Post(uuid.toString(),user!!.id,0, emptyList(),user!!.profilePhoto,user!!.username, System.currentTimeMillis())
+            val newPost = Post(uuid.toString(),user!!.id, emptyList(),user!!.profilePhoto,user!!.username, System.currentTimeMillis())
             postViewModel.uploadPost(newPost, photoUri)
             onPostSent()
         }

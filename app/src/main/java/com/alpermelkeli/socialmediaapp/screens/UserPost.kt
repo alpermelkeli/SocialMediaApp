@@ -39,18 +39,19 @@ import com.alpermelkeli.socialmediaapp.model.Post
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserPost(postIndex:Int, onBackClicked:()->Unit){
+
     val columnScrollState = rememberLazyListState()
+
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
     val postViewModel = context.postsViewModel
+
     val commentViewModel = context.commentsViewModel
-    val likesViewModel = context.likesViewModel
+
     val userPosts by postViewModel.userPosts.observeAsState(emptyList())
+
     val commentSheetState = rememberModalBottomSheetState()
 
-    val userViewModel = context.userViewModel
-    val user by userViewModel.user.observeAsState()
-
-    val likes by likesViewModel.like.observeAsState(emptyList())
     val comments by commentViewModel.comments.observeAsState(emptyList())
 
     var selectedPost by remember{ mutableStateOf("") }
@@ -59,21 +60,6 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
         mutableStateOf(false)
     }
 
-    val onClickedLike = {post: Post ->
-        user?.let{
-            val likeDetails = Like(post.postId, post.senderId, System.currentTimeMillis())
-            var clickCount = 0
-            for (id in it.id){
-                if (clickCount == 0){
-                    selectedPost = post.postId
-                    likesViewModel.updateLike(post.postId, likeDetails)
-                    likesViewModel.getPostLikes(post.postId)
-                    clickCount++
-                }else {
-                }
-            }
-        }
-    }
 
     val onClickedComment= {post:Post ->
         isCommentSheetOpen = true
@@ -112,9 +98,7 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
             items(userPosts){
                 Post(post = it,
                     onClickedComment = { onClickedComment(it) },
-                    onClickedLike = { onClickedLike(it)
-                        Toast.makeText(context, "You post has been liked", Toast.LENGTH_SHORT).show()
-                    }
+
                 )
 
             }

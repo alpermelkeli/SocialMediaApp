@@ -2,33 +2,40 @@ package com.alpermelkeli.socialmediaapp.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.repository.LikesRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+class LikesViewModel(application: Application, private val likesRepository: LikesRepository) :
+    AndroidViewModel(application) {
 
-class LikesViewModel(application: Application, private val likesRepository: LikesRepository):
-    AndroidViewModel(application){
-    private val likes : MutableLiveData<List<Like>> = MutableLiveData()
+    private val _likesMap: MutableStateFlow<Map<String, List<Like>>> = MutableStateFlow(emptyMap())
 
-    val like : LiveData<List<Like>> get() = likes
+    val likesMap: StateFlow<Map<String, List<Like>>> get() = _likesMap
 
-     fun getPostLikes(postId:String){
+    fun fetchPostLikes(postId: String) {
         viewModelScope.launch {
-            likesRepository.getPostLikes(postId){
-                likes.postValue(it)
+            likesRepository.getPostLikes(postId) { likes ->
+                _likesMap.value = _likesMap.value.toMutableMap().apply {
+                    this[postId] = likes
+                }
             }
         }
     }
 
-
-    fun updateLike(postId: String, like: Like){
+    fun updateLike(postId: String, like: Like) {
         viewModelScope.launch {
-            likesRepository.updateLikeData(postId, like)
-            getPostLikes(postId)
+            likesRepository.sendLike(like)
+            fetchPostLikes(postId) // Refresh the likes after updating
+        }
+    }
+    fun removeLike(postId:String, likeId: String){
+        viewModelScope.launch {
+            likesRepository.removeLike(likeId)
+            fetchPostLikes(postId)
         }
     }
 }

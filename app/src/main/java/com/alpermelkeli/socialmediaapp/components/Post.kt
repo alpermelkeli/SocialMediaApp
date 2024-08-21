@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
@@ -26,11 +27,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,13 +45,43 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
+import java.util.UUID
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Post(post: Post, onClickedComment: () -> Unit, onClickedLike: () -> Unit) {
+fun Post(post: Post, onClickedComment: () -> Unit) {
+    val context = LocalContext.current.applicationContext as SocialMediaApplication
 
-    val likeCount = post.likeCount
+    val likesViewModel = context.likesViewModel
+
+    val likesMap by likesViewModel.likesMap.collectAsState()
+
+    val likes = likesMap[post.postId] ?: emptyList()
+
+    val isLiked = likes.any { it.userId == post.senderId }
+
+
+    LaunchedEffect(Unit) {
+        likesViewModel.fetchPostLikes(post.postId)
+    }
+
+    val onClickedLike = {
+        if(!isLiked){
+            val uuid = UUID.randomUUID()
+            val likeDetails = Like(uuid.toString(),post.postId, post.senderId, System.currentTimeMillis())
+            likesViewModel.updateLike(post.postId, likeDetails)
+        }
+        else{
+            for (like in likes){
+                if(like.userId==post.senderId){
+                    likesViewModel.removeLike(post.postId, like.likeId)
+                }
+            }
+        }
+    }
 
     val images = post.images
 
@@ -154,7 +190,8 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedLike: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder, contentDescription = "like",
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    "",
                     modifier = Modifier
                         .size(35.dp)
                         .clickable { onClickedLike() },
@@ -186,7 +223,7 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedLike: () -> Unit) {
 
         }
         Text(
-            text = "$likeCount Likes",
+            text = "${likes.size} Likes",
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,

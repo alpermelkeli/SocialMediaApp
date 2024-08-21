@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+
     implementation ("androidx.camera:camera-core:1.1.0")
     implementation ("androidx.camera:camera-camera2:1.1.0")
     implementation ("androidx.camera:camera-lifecycle:1.1.0")

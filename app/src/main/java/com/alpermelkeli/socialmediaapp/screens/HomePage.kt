@@ -51,10 +51,8 @@ fun HomePage(onCameraClicked:()->Unit) {
     val postViewModel = context.postsViewModel
     val homePagePosts by postViewModel.homePagePosts.observeAsState(emptyList())
 
-    val likesViewModel = context.likesViewModel
     val commentViewModel = context.commentsViewModel
 
-    val likes by likesViewModel.like.observeAsState(emptyList())
     val comments by commentViewModel.comments.observeAsState(emptyList())
 
     var selectedPost by remember{ mutableStateOf("") }
@@ -74,24 +72,6 @@ fun HomePage(onCameraClicked:()->Unit) {
 
     val commentSheetState = rememberModalBottomSheetState()
 
-
-
-    val onClickedLike = {post: Post ->
-        user?.let{
-            val likeDetails = Like(post.postId, post.senderId, System.currentTimeMillis())
-            var clickCount = 0
-            for (id in it.id){
-                if (clickCount == 0){
-                    selectedPost = post.postId
-                    likesViewModel.updateLike(post.postId, likeDetails)
-                    likesViewModel.getPostLikes(post.postId)
-                    clickCount++
-                }else {
-
-                }
-            }
-        }
-    }
 
     val onClickedComment = {post: Post ->
         isCommentSheetOpen = true
@@ -155,9 +135,7 @@ fun HomePage(onCameraClicked:()->Unit) {
                 items(homePagePosts) {
                     Post(post = it,
                         onClickedComment = { onClickedComment(it) },
-                        onClickedLike = { onClickedLike(it)
-                            Toast.makeText(context, "You post has been liked", Toast.LENGTH_SHORT).show()
-                        }
+
                     )
 
 

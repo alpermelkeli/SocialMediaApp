@@ -7,12 +7,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 class LikesRepository {
     private val db = FirebaseFirestore.getInstance()
 
-    fun updateLikeData(post: String, likes: Like) {
+    fun sendLike(like: Like) {
         val likeCollection = db.collection("Likes")
         val likeDetails = mapOf(
-            "userId" to likes.userId,
-            "postId" to likes.postId,
-            "createdAt" to likes.createdAt,
+            "userId" to like.userId,
+            "postId" to like.postId,
+            "createdAt" to like.createdAt,
         )
         likeCollection.add(likeDetails)
             .addOnSuccessListener {
@@ -26,14 +26,26 @@ class LikesRepository {
             .get()
             .addOnSuccessListener { result ->
                 val postLikesDetails = result.documents.mapNotNull { document ->
+                    val likeId = document.id
                     val userId = document.getString("userId") ?: ""
                     val createdAt = document.getLong("createdAt") ?: 0
-                    Like(userId, postId, createdAt)
+                    Like(likeId,postId, userId, createdAt)
                 }
                 callBack(postLikesDetails)
             }
             .addOnFailureListener {
                 callBack(emptyList())
+            }
+    }
+    fun removeLike(likeId: String) {
+        db.collection("Likes")
+            .document(likeId)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("Likes", "Like successfully removed from the database")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Likes", "Error removing like", e)
             }
     }
 
