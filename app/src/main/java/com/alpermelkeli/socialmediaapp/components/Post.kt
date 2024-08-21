@@ -54,6 +54,9 @@ import java.util.UUID
 @Composable
 fun Post(post: Post, onClickedComment: () -> Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+    val userViewModel = context.userViewModel
+
+    val user by userViewModel.user.observeAsState()
 
     val likesViewModel = context.likesViewModel
 
@@ -61,7 +64,7 @@ fun Post(post: Post, onClickedComment: () -> Unit) {
 
     val likes = likesMap[post.postId] ?: emptyList()
 
-    val isLiked = likes.any { it.userId == post.senderId }
+    val isLiked = likes.any { it.userId == user?.id }
 
 
     LaunchedEffect(Unit) {
@@ -71,7 +74,7 @@ fun Post(post: Post, onClickedComment: () -> Unit) {
     val onClickedLike = {
         if(!isLiked){
             val uuid = UUID.randomUUID()
-            val likeDetails = Like(uuid.toString(),post.postId, post.senderId, System.currentTimeMillis())
+            val likeDetails = Like(uuid.toString(),post.postId, user!!.id, System.currentTimeMillis())
             likesViewModel.updateLike(post.postId, likeDetails)
         }
         else{

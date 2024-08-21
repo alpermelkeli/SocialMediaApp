@@ -54,7 +54,7 @@ fun HomePage(onCameraClicked:()->Unit) {
     val commentViewModel = context.commentsViewModel
 
     val comments by commentViewModel.comments.observeAsState(emptyList())
-
+    println(user?.username)
     var selectedPost by remember{ mutableStateOf("") }
 
     LaunchedEffect(Unit) {
