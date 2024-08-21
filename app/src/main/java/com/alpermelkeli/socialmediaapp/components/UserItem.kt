@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,12 +22,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun UserItem(profilePhoto:String, userName:String){
+fun UserItem(profilePhoto:String, userName:String, onClickUserItem:()->Unit){
 
     Row(
         Modifier
             .fillMaxWidth()
-            .height(70.dp),
+            .height(70.dp)
+            .clickable { onClickUserItem() },
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically) {
 

@@ -15,6 +15,10 @@ class UserViewModel(application: Application, private val userRepository: UserRe
 
     val user : LiveData<User> get() = _user
 
+    private val _targetUser : MutableLiveData<User> = MutableLiveData()
+
+    val targetUser : LiveData<User> get() = _targetUser
+
     private val _searchResults: MutableLiveData<List<User>> = MutableLiveData()
 
     val searchResults: LiveData<List<User>> get() = _searchResults
@@ -23,6 +27,13 @@ class UserViewModel(application: Application, private val userRepository: UserRe
         viewModelScope.launch {
             userRepository.getUserDocument(id){
              _user.postValue(it)
+            }
+        }
+    }
+    fun getTargetUser(id:String){
+        viewModelScope.launch {
+            userRepository.getUserDocument(id){
+                _targetUser.postValue(it)
             }
         }
     }

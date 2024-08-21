@@ -27,22 +27,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.UserItem
-import com.alpermelkeli.socialmediaapp.model.User
 import com.alpermelkeli.socialmediaapp.ui.theme.Grey20
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun Search() {
+fun Search(onUserItemClicked:(String)->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
     val userViewModel = context.userViewModel
+
     val searchResults by userViewModel.searchResults.observeAsState(emptyList())
+
     val columnScrollState = rememberLazyListState()
+
     var searchText by remember{ mutableStateOf("") }
+
     Column(Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -74,7 +76,9 @@ fun Search() {
         LazyColumn(Modifier.fillMaxSize(),
             state = columnScrollState) {
             items(searchResults){
-                UserItem(profilePhoto = it.profilePhoto, userName = it.username)
+                UserItem(profilePhoto = it.profilePhoto, userName = it.username){
+                    onUserItemClicked(it.id)//It gives user id.
+                }
             }
         }
 

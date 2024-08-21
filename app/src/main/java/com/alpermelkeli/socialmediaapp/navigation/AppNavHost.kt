@@ -13,6 +13,7 @@ import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.SignUp
+import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
@@ -38,13 +39,18 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         }
         composable(
             route = NavRoutes.UserPost.route,
-            arguments = listOf(navArgument("id") {
+            arguments = listOf(navArgument("index") {
                 type = NavType.StringType
+            }, navArgument("isTarget"){
+                type = NavType.BoolType
             })
         ) { backStackEntry ->
-            val postIndex = backStackEntry.arguments?.getString("id")
-            postIndex?.let {
-                UserPost(postIndex = it.toInt(), onBackClicked = { navController.popBackStack() })
+            val postIndex = backStackEntry.arguments?.getString("index")
+            val isTarget = backStackEntry.arguments?.getBoolean("isTarget")
+            postIndex?.let {postIndex->
+                isTarget?.let {
+                    UserPost(postIndex = postIndex.toInt(), isTarget = it, onBackClicked = { navController.popBackStack() })
+                }
             }
         }
 
@@ -61,6 +67,18 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
 
         composable(NavRoutes.SignUp.route){
             SignUp()
+        }
+
+        composable(NavRoutes.TargetProfile.route,
+            arguments = listOf(navArgument("userId"){
+                type = NavType.StringType
+            })
+        ){backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            userId?.let {
+                TargetProfile(targetUserId = it, onClickedPost = {navController.navigate("userpost/$it/true")})
+            }
+
         }
 
         composable(NavRoutes.Home.route){

@@ -20,10 +20,10 @@ fun HomeNavHost(navController: NavHostController,
             HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)})
         }
         composable(HomeRoutes.Profile.route){
-            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it")})
+            Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate("userpost"+"/$it/false")})
         }
         composable(HomeRoutes.Search.route){
-            Search()
+            Search(onUserItemClicked = {onNavigate("targetprofile" + "/$it")})
         }
     }
 }

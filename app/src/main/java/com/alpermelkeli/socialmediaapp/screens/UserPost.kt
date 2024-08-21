@@ -38,7 +38,7 @@ import com.alpermelkeli.socialmediaapp.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserPost(postIndex:Int, onBackClicked:()->Unit){
+fun UserPost(postIndex:Int, isTarget:Boolean, onBackClicked:()->Unit){
 
     val columnScrollState = rememberLazyListState()
 
@@ -48,7 +48,7 @@ fun UserPost(postIndex:Int, onBackClicked:()->Unit){
 
     val commentViewModel = context.commentsViewModel
 
-    val userPosts by postViewModel.userPosts.observeAsState(emptyList())
+    val userPosts by if(isTarget) postViewModel.targetUserPost.observeAsState(emptyList()) else postViewModel.userPosts.observeAsState(emptyList())
 
     val commentSheetState = rememberModalBottomSheetState()
 

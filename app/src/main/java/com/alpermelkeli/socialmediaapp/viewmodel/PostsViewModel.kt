@@ -21,6 +21,10 @@ class PostsViewModel(application: Application, private val postsRepository: Post
 
     val userPosts : LiveData<List<Post>> get() = _userPosts
 
+    private val _targetUserPost : MutableLiveData<List<Post>> = MutableLiveData()
+
+    val targetUserPost : LiveData<List<Post>> get() = _targetUserPost
+
 
     fun getUserHomePagePosts(followings:List<String>){
         viewModelScope.launch {
@@ -34,6 +38,13 @@ class PostsViewModel(application: Application, private val postsRepository: Post
         viewModelScope.launch {
             postsRepository.getUserPosts(id){
                 _userPosts.postValue(it)
+            }
+        }
+    }
+    fun getTargetUserPosts(id:String){
+        viewModelScope.launch {
+            postsRepository.getUserPosts(id){
+                _targetUserPost.postValue(it)
             }
         }
     }
