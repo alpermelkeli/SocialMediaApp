@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,14 +31,25 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
 
 @Composable
-fun StoriesRow(size:Dp,stories:List<String>, scrollState: LazyListState, onClickedStory:(String)->Unit){
+fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
+
+
 
     LazyRow(modifier = Modifier
         .fillMaxWidth()
         .height(size)
         .background(MaterialTheme.colorScheme.background),
         state = scrollState) {
+        item {
+            if(addCollection){
+                AddCollectionItem(size = size){
+                    onClickedAddCollection()
+                }
+            }
+        }
         items(stories){
+
+
             StoriesRowItem(size,false,it){
                 onClickedStory(it)
             }
@@ -45,20 +58,21 @@ fun StoriesRow(size:Dp,stories:List<String>, scrollState: LazyListState, onClick
     }
 
 }
-
 @Composable
-fun StoriesRowItem(size:Dp,isOpened:Boolean,username:String, onClickedStory: (String) -> Unit){
+fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
     Column(modifier = Modifier
         .size(size = size)
-        .clickable { onClickedStory(username) },
+        .clickable {onClickedAddCollection() },
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(size.times(0.7f)),
+        Box(
+            Modifier.size(size.times(0.7f)),
             contentAlignment = Alignment.Center) {
-            Image(imageVector = ImageVector.vectorResource(id = R.drawable.story_oval), contentDescription = "story",
-                modifier = Modifier.clip(CircleShape)
+            Image(imageVector = ImageVector.vectorResource(id = R.drawable.opened_story_oval), contentDescription = "story",
+                modifier = Modifier
+                    .clip(CircleShape)
                     .size(size.times(0.7f)))
 
-            Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_background), contentDescription = "user",
+            Image(imageVector = Icons.Default.Add, contentDescription = "user",
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(size.times(0.6f))
@@ -66,7 +80,8 @@ fun StoriesRowItem(size:Dp,isOpened:Boolean,username:String, onClickedStory: (St
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = username)
+        Text(text = "Add")
     }
 
 }
+

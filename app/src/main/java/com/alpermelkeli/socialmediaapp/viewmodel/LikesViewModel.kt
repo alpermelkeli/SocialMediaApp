@@ -26,7 +26,7 @@ class LikesViewModel(application: Application, private val likesRepository: Like
         }
     }
 
-    fun updateLike(postId: String, like: Like) {
+    fun sendLike(postId: String, like: Like) {
         viewModelScope.launch {
             likesRepository.sendLike(like)
             fetchPostLikes(postId) // Refresh the likes after updating

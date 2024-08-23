@@ -126,9 +126,11 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                     Spacer(modifier = Modifier.height(90.dp))
 
                     StoriesRow(
+                        true,
                         size = 100.dp,
                         stories = exampleStories,
                         scrollState = storyRowScrollState,
+                        onClickedAddCollection = {},
                         onClickedStory = { println(it) })
                 }
 

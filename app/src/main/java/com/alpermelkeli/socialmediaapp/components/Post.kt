@@ -37,12 +37,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
@@ -75,7 +75,7 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
         if(!isLiked){
             val uuid = UUID.randomUUID()
             val likeDetails = Like(uuid.toString(),post.postId, user!!.id, System.currentTimeMillis())
-            likesViewModel.updateLike(post.postId, likeDetails)
+            likesViewModel.sendLike(post.postId, likeDetails)
         }
         else{
             val likeToRemove = likes.find { it.userId == user!!.id }
@@ -117,7 +117,9 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
 
 
                 Image(
-                    painter = rememberAsyncImagePainter(model = post.senderPhoto),
+                    painter = rememberAsyncImagePainter(model = post.senderPhoto,
+                        placeholder = painterResource(R.drawable.ic_launcher_background),
+                        error = painterResource(R.drawable.ic_launcher_background)),
                     contentDescription = "photo",
                     modifier = Modifier
                         .size(40.dp)
@@ -158,7 +160,9 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
                 .fillMaxWidth()
                 .height(360.dp)
         ) {
-
+            val painter = rememberAsyncImagePainter(model = images[it],
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                error = painterResource(R.drawable.ic_launcher_background))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,7 +171,7 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
             ) {
 
                 Image(
-                    painter = rememberAsyncImagePainter(model = images[it]),
+                    painter = painter,
                     contentDescription = "image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop

@@ -170,9 +170,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    AddCollection(onClickedAddCollection = {})
-
-                    StoriesRow(size = 80.dp, stories = exampleStories, scrollState = rowScrollState) {
+                    StoriesRow(true,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
                     }
                     
@@ -211,22 +209,6 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
             }
 
         }
-    }
-}
-
-
-@Composable
-fun AddCollection(onClickedAddCollection:()->Unit){
-    Column(
-        Modifier
-            .fillMaxHeight()
-            .width(80.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.add_collection_icon), contentDescription = "add",
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable { onClickedAddCollection() })
     }
 }
 

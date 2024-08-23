@@ -7,8 +7,6 @@ import androidx.navigation.compose.composable
 import com.alpermelkeli.socialmediaapp.screens.HomePage
 import com.alpermelkeli.socialmediaapp.screens.Profile
 import com.alpermelkeli.socialmediaapp.screens.Search
-import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
-import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 
 @Composable
 fun HomeNavHost(navController: NavHostController,
