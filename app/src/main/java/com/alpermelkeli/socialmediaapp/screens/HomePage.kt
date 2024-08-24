@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,23 +39,37 @@ import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit) {
+    val scope = rememberCoroutineScope()
+
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
+    val storeData = context.storeData
+
     val userViewModel = context.userViewModel
+
     val user by userViewModel.user.observeAsState()
 
+    user?.let {
+        scope.launch {
+            storeData.saveUsername(it.username)
+            storeData.saveProfilePhoto(it.profilePhoto)
+        }
+    }
+
     val postViewModel = context.postsViewModel
+
     val homePagePosts by postViewModel.homePagePosts.observeAsState(emptyList())
 
     val commentViewModel = context.commentsViewModel
 
     val comments by commentViewModel.comments.observeAsState(emptyList())
-    println(user?.username)
+
     var selectedPost by remember{ mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -126,9 +141,11 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                     Spacer(modifier = Modifier.height(90.dp))
 
                     StoriesRow(
+                        true,
                         size = 100.dp,
                         stories = exampleStories,
                         scrollState = storyRowScrollState,
+                        onClickedAddCollection = {},
                         onClickedStory = { println(it) })
                 }
 

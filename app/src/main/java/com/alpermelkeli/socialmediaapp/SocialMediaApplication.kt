@@ -4,6 +4,7 @@ import android.app.Application
 import com.alpermelkeli.socialmediaapp.repository.CommentsRepository
 import com.alpermelkeli.socialmediaapp.repository.LikesRepository
 import com.alpermelkeli.socialmediaapp.repository.PostsRepository
+import com.alpermelkeli.socialmediaapp.repository.StoreData
 import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import com.alpermelkeli.socialmediaapp.viewmodel.CommentsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.LikesViewModel
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.auth.User
 
 class SocialMediaApplication: Application() {
 
+    lateinit var storeData: StoreData
     lateinit var userViewModel: UserViewModel
     lateinit var postsViewModel: PostsViewModel
     lateinit var likesViewModel: LikesViewModel
@@ -37,6 +39,7 @@ class SocialMediaApplication: Application() {
         postRepository = PostsRepository()
         likesRepository = LikesRepository()
         commentsRepository = CommentsRepository()
+        storeData = StoreData(this)
         userViewModel = UserViewModel(application = this, userRepository)
         postsViewModel = PostsViewModel(application = this, postRepository)
         likesViewModel = LikesViewModel(this, likesRepository)

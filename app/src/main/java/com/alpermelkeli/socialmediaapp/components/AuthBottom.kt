@@ -15,14 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alpermelkeli.socialmediaapp.ui.theme.Black50
 import com.alpermelkeli.socialmediaapp.ui.theme.Grey50
 
 @Composable
-fun LoginBottom(onSignUpClicked:()->Unit){
+fun AuthBottom(firstText:String,secondText:String,onSignUpClicked:()->Unit){
     Column(
         Modifier
             .fillMaxWidth()
@@ -40,13 +38,13 @@ fun LoginBottom(onSignUpClicked:()->Unit){
             .height(70.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
-            Text(text = "Don't have an account?",
+            Text(text = firstText,
                 color = Grey50,
                 fontSize = 12.sp)
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Text(text = "Sign up.",
+            Text(text = secondText,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.clickable { onSignUpClicked() }

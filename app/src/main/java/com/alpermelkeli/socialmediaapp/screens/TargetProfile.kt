@@ -149,7 +149,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(size = 80.dp, stories = exampleStories, scrollState = rowScrollState) {
+                    StoriesRow(false,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
                     }
 

@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.dataStore
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.BackTopBar
 import com.alpermelkeli.socialmediaapp.components.DefaultButton
 import com.alpermelkeli.socialmediaapp.components.DefaultTextField
@@ -42,14 +45,23 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.repository.AuthResults
 import com.alpermelkeli.socialmediaapp.ui.theme.Blue50
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
+fun LoginWithField(emailText:String,onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
+    val darkTheme = isSystemInDarkTheme()
+
+    val scope = rememberCoroutineScope()
+
     val context = LocalContext.current
 
+    val appContext = context.applicationContext as SocialMediaApplication
+
+    val storeData = appContext.storeData
+
     var usernameText by remember {
-        mutableStateOf("")
+        mutableStateOf(emailText)
     }
     var passwordText by remember {
         mutableStateOf("")
@@ -62,7 +74,6 @@ fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPass
 
     SocialMediaAppTheme {
 
-        val darkTheme = isSystemInDarkTheme()
 
         Scaffold(Modifier.fillMaxSize(), topBar = {
             BackTopBar{onClickBack()} }) {
@@ -98,10 +109,13 @@ fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPass
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                DefaultButton(modifier = Modifier.fillMaxWidth(0.9f), isEnabled = isButtonEnabled) {
+                DefaultButton(modifier = Modifier.fillMaxWidth(0.9f), "Log in",isEnabled = isButtonEnabled) {
                     AuthOperations.login(usernameText, passwordText) { authResult ->
                         if (authResult == AuthResults.Success) {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                storeData.saveEmail(usernameText)
+                            }
                             onClickLogin()
                         } else {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()

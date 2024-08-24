@@ -10,8 +10,8 @@ import androidx.navigation.navArgument
 import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
-import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.SignUp
+import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 
@@ -19,20 +19,36 @@ import com.alpermelkeli.socialmediaapp.screens.UserPost
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
 
     NavHost(navController = navController , startDestination = startDestination) {
+        composable(NavRoutes.SignUp.route){
+
+            SignUp(onRegisteredSuccessfully = {
+                navController.navigate(NavRoutes.Login.route)
+            })
+
+        }
+
         composable(NavRoutes.Login.route){
             Login(
                 onClickedSwitchAccounts = { navController.navigate(NavRoutes.LoginWithField.route) },
-                onClickedLogin = { navController.navigate(NavRoutes.LoginWithField.route) },
-                onClickedSignUp = { navController.navigate(NavRoutes.LoginWithField.route) },
+                onClickedLogin = {navController.navigate(if(!it.isEmpty())"loginwithfield/$it" else "loginwithfield/email")},
+                onClickedSignUp = { navController.navigate(NavRoutes.SignUp.route) },
             )
         }
-        composable(NavRoutes.LoginWithField.route){
-            LoginWithField(
-                onClickBack = {navController.popBackStack()},
-                onClickForgotPassword = {},
-                onClickLogin = {navController.navigate(NavRoutes.Home.route)},
-                onClickSignUp = {},
-            )
+        composable(route = NavRoutes.LoginWithField.route,
+            arguments = listOf(navArgument("email"){
+                type = NavType.StringType
+            })
+            ){ backStackEntry->
+            val email = backStackEntry.arguments?.getString("email")
+            email?.let {
+                LoginWithField(
+                    it,
+                    onClickBack = {navController.popBackStack()},
+                    onClickForgotPassword = {},
+                    onClickLogin = {navController.navigate(NavRoutes.Home.route)},
+                    onClickSignUp = {},
+                )
+            }
         }
         composable(
             route = NavRoutes.UserPost.route,
@@ -60,10 +76,6 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
             imageUri?.let {
                 SendPost(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
             }
-        }
-
-        composable(NavRoutes.SignUp.route){
-            SignUp()
         }
 
         composable(NavRoutes.TargetProfile.route,
