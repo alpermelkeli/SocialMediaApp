@@ -50,8 +50,15 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginWithField(emailText:String,onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
+    val darkTheme = isSystemInDarkTheme()
+
+    val scope = rememberCoroutineScope()
+
     val context = LocalContext.current
 
+    val appContext = context.applicationContext as SocialMediaApplication
+
+    val storeData = appContext.storeData
 
     var usernameText by remember {
         mutableStateOf(emailText)
@@ -67,7 +74,6 @@ fun LoginWithField(emailText:String,onClickBack:()->Unit,onClickLogin:()->Unit, 
 
     SocialMediaAppTheme {
 
-        val darkTheme = isSystemInDarkTheme()
 
         Scaffold(Modifier.fillMaxSize(), topBar = {
             BackTopBar{onClickBack()} }) {
@@ -103,10 +109,13 @@ fun LoginWithField(emailText:String,onClickBack:()->Unit,onClickLogin:()->Unit, 
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                DefaultButton(modifier = Modifier.fillMaxWidth(0.9f), isEnabled = isButtonEnabled) {
+                DefaultButton(modifier = Modifier.fillMaxWidth(0.9f), "Log in",isEnabled = isButtonEnabled) {
                     AuthOperations.login(usernameText, passwordText) { authResult ->
                         if (authResult == AuthResults.Success) {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                storeData.saveEmail(usernameText)
+                            }
                             onClickLogin()
                         } else {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()

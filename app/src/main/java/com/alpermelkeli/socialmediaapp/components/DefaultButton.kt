@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.ui.theme.Blue50
 
 @Composable
-fun DefaultButton(modifier: Modifier, isEnabled:Boolean, onClick:()->Unit){
+fun DefaultButton(modifier: Modifier, text:String,isEnabled:Boolean, onClick:()->Unit){
 
     Button(onClick = { onClick() },
         modifier = modifier,
@@ -24,7 +24,7 @@ fun DefaultButton(modifier: Modifier, isEnabled:Boolean, onClick:()->Unit){
         colors = ButtonDefaults.buttonColors().copy(containerColor = Blue50),
         enabled = isEnabled
         ) {
-        Text(text = "Log in",
+        Text(text = text,
             color = Color.White)
     }
 

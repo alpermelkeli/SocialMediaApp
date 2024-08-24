@@ -31,7 +31,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.DefaultButton
-import com.alpermelkeli.socialmediaapp.components.LoginBottom
+import com.alpermelkeli.socialmediaapp.components.AuthBottom
 import com.alpermelkeli.socialmediaapp.ui.theme.Blue50
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 
@@ -52,7 +52,7 @@ fun Login(onClickedLogin:(String)->Unit, onClickedSwitchAccounts:()->Unit, onCli
 
         Scaffold(Modifier.fillMaxSize(), bottomBar = {
 
-            LoginBottom(onSignUpClicked = {})
+            AuthBottom(firstText = "Don't have an account ?", secondText = "Sign Up.",onSignUpClicked = {onClickedSignUp()})
 
         })
         {
@@ -82,7 +82,7 @@ fun Login(onClickedLogin:(String)->Unit, onClickedSwitchAccounts:()->Unit, onCli
 
                 DefaultButton(modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .height(50.dp), isEnabled = true){
+                    .height(50.dp), text = "Log in",isEnabled = true){
                     onClickedLogin(email.toString())
                 }
 

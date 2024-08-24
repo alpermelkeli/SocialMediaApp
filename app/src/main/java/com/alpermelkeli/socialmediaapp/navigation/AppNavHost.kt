@@ -10,8 +10,8 @@ import androidx.navigation.navArgument
 import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
-import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.SignUp
+import com.alpermelkeli.socialmediaapp.screens.SendPost
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 
@@ -19,11 +19,19 @@ import com.alpermelkeli.socialmediaapp.screens.UserPost
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
 
     NavHost(navController = navController , startDestination = startDestination) {
+        composable(NavRoutes.SignUp.route){
+
+            SignUp(onRegisteredSuccessfully = {
+                navController.navigate(NavRoutes.Login.route)
+            })
+
+        }
+
         composable(NavRoutes.Login.route){
             Login(
-                onClickedSwitchAccounts = { navController.navigate("loginwithfield/") },
-                onClickedLogin = {navController.navigate("loginwithfield/$it")},
-                onClickedSignUp = { navController.navigate(NavRoutes.LoginWithField.route) },
+                onClickedSwitchAccounts = { navController.navigate(NavRoutes.LoginWithField.route) },
+                onClickedLogin = {navController.navigate(if(!it.isEmpty())"loginwithfield/$it" else "loginwithfield/email")},
+                onClickedSignUp = { navController.navigate(NavRoutes.SignUp.route) },
             )
         }
         composable(route = NavRoutes.LoginWithField.route,
@@ -68,10 +76,6 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
             imageUri?.let {
                 SendPost(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
             }
-        }
-
-        composable(NavRoutes.SignUp.route){
-            SignUp()
         }
 
         composable(NavRoutes.TargetProfile.route,
