@@ -37,7 +37,7 @@ import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Login(onClickedLogin:()->Unit, onClickedSwitchAccounts:()->Unit, onClickedSignUp:()->Unit){
+fun Login(onClickedLogin:(String)->Unit, onClickedSwitchAccounts:()->Unit, onClickedSignUp:()->Unit){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val storeData = context.storeData
@@ -46,6 +46,7 @@ fun Login(onClickedLogin:()->Unit, onClickedSwitchAccounts:()->Unit, onClickedSi
 
     val profilePhoto by storeData.getProfilePhoto.collectAsState(initial = "")
 
+    val email by storeData.getEmail.collectAsState(initial = "")
     SocialMediaAppTheme {
         val darkTheme = isSystemInDarkTheme()
 
@@ -82,7 +83,7 @@ fun Login(onClickedLogin:()->Unit, onClickedSwitchAccounts:()->Unit, onClickedSi
                 DefaultButton(modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp), isEnabled = true){
-                    onClickedLogin()
+                    onClickedLogin(email.toString())
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))

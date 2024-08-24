@@ -21,18 +21,26 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
     NavHost(navController = navController , startDestination = startDestination) {
         composable(NavRoutes.Login.route){
             Login(
-                onClickedSwitchAccounts = { navController.navigate(NavRoutes.LoginWithField.route) },
-                onClickedLogin = { navController.navigate(NavRoutes.LoginWithField.route) },
+                onClickedSwitchAccounts = { navController.navigate("loginwithfield/") },
+                onClickedLogin = {navController.navigate("loginwithfield/$it")},
                 onClickedSignUp = { navController.navigate(NavRoutes.LoginWithField.route) },
             )
         }
-        composable(NavRoutes.LoginWithField.route){
-            LoginWithField(
-                onClickBack = {navController.popBackStack()},
-                onClickForgotPassword = {},
-                onClickLogin = {navController.navigate(NavRoutes.Home.route)},
-                onClickSignUp = {},
-            )
+        composable(route = NavRoutes.LoginWithField.route,
+            arguments = listOf(navArgument("email"){
+                type = NavType.StringType
+            })
+            ){ backStackEntry->
+            val email = backStackEntry.arguments?.getString("email")
+            email?.let {
+                LoginWithField(
+                    it,
+                    onClickBack = {navController.popBackStack()},
+                    onClickForgotPassword = {},
+                    onClickLogin = {navController.navigate(NavRoutes.Home.route)},
+                    onClickSignUp = {},
+                )
+            }
         }
         composable(
             route = NavRoutes.UserPost.route,

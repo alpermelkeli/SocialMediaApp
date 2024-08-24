@@ -49,16 +49,12 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
-    val scope = rememberCoroutineScope()
+fun LoginWithField(emailText:String,onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPassword:()->Unit, onClickSignUp:()->Unit){
     val context = LocalContext.current
 
-    val appContext = context.applicationContext as SocialMediaApplication
-
-    val storeData = appContext.storeData
 
     var usernameText by remember {
-        mutableStateOf("")
+        mutableStateOf(emailText)
     }
     var passwordText by remember {
         mutableStateOf("")
@@ -111,9 +107,6 @@ fun LoginWithField(onClickBack:()->Unit,onClickLogin:()->Unit, onClickForgotPass
                     AuthOperations.login(usernameText, passwordText) { authResult ->
                         if (authResult == AuthResults.Success) {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
-                            scope.launch {
-                                storeData.saveEmail(usernameText)
-                            }
                             onClickLogin()
                         } else {
                             Toast.makeText(context,authResult.message,Toast.LENGTH_SHORT).show()
