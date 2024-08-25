@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.repository
 
 import com.alpermelkeli.socialmediaapp.model.User
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -63,4 +64,42 @@ class UserRepository {
                 callBack(emptyList())
             }
     }
+    fun followUser(userId: String, followId: String, callBack: () -> Unit) {
+        val userRef = db.collection("Users").document(userId)
+        val followRef = db.collection("Users").document(followId)
+
+        userRef.update("following", FieldValue.arrayUnion(followId))
+            .addOnSuccessListener {
+                followRef.update("followers", FieldValue.arrayUnion(userId))
+                    .addOnSuccessListener {
+                        callBack()
+                    }
+                    .addOnFailureListener { e ->
+                        e.printStackTrace()
+                    }
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
+    }
+
+    fun unfollowUser(userId: String, unfollowId: String, callBack: () -> Unit) {
+        val userRef = db.collection("Users").document(userId)
+        val unfollowRef = db.collection("Users").document(unfollowId)
+
+        userRef.update("following", FieldValue.arrayRemove(unfollowId))
+            .addOnSuccessListener {
+                unfollowRef.update("followers", FieldValue.arrayRemove(userId))
+                    .addOnSuccessListener {
+                        callBack()
+                    }
+                    .addOnFailureListener { e ->
+                        e.printStackTrace()
+                    }
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
+    }
+
 }

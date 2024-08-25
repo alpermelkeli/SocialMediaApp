@@ -34,6 +34,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -202,7 +203,7 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
                     modifier = Modifier
                         .size(35.dp)
                         .clickable { onClickedLike() },
-                    tint = MaterialTheme.colorScheme.secondary
+                    tint = if(isLiked) Color.Red else MaterialTheme.colorScheme.secondary
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),

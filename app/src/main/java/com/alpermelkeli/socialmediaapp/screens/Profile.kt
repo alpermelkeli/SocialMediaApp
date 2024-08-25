@@ -87,7 +87,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
     val rowScrollState = rememberLazyListState()
 
-    Scaffold(Modifier.fillMaxSize(),
+    Scaffold(Modifier.fillMaxSize().padding(top = 20.dp),
         topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {
             AuthOperations.logOut()
             onClickedLogOut()
@@ -186,8 +186,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
             items(userPosts.chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     rowItems.forEach { post ->
@@ -220,7 +219,9 @@ fun IndicatorText(number:String,label:String){
         horizontalAlignment = Alignment.CenterHorizontally){
         Text(text = number,
             fontSize = 15.sp,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
 
         Text(text = label,
             fontSize = 15.sp,

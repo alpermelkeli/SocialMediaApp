@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,15 +73,18 @@ fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
                     .clip(CircleShape)
                     .size(size.times(0.7f)))
 
-            Image(imageVector = Icons.Default.Add, contentDescription = "user",
+            Icon(imageVector = Icons.Default.Add, contentDescription = "user",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(size.times(0.6f))
+                    .size(size.times(0.6f)),
+                tint = MaterialTheme.colorScheme.secondary
             )
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = "Add")
+
+        Text(text = "Add",
+            color = MaterialTheme.colorScheme.secondary)
     }
 
 }

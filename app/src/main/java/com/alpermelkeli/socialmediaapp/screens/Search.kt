@@ -34,11 +34,11 @@ import com.alpermelkeli.socialmediaapp.ui.theme.Grey20
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Search(onUserItemClicked:(String)->Unit) {
+fun Search(onUserItemClicked:(String)->Unit, onClickedOwnUserItem:()->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
-
+    val user by userViewModel.user.observeAsState()
     val searchResults by userViewModel.searchResults.observeAsState(emptyList())
 
     val columnScrollState = rememberLazyListState()
@@ -77,7 +77,13 @@ fun Search(onUserItemClicked:(String)->Unit) {
             state = columnScrollState) {
             items(searchResults){
                 UserItem(profilePhoto = it.profilePhoto, userName = it.username){
-                    onUserItemClicked(it.id)//It gives user id.
+
+                    if(user?.id == it.id){
+
+                    }
+                    else{
+                        onUserItemClicked(it.id)
+                    }
                 }
             }
         }

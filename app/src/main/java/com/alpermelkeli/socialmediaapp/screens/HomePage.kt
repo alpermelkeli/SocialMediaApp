@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit) {
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
@@ -152,7 +152,14 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                 items(homePagePosts) {
                     Post(post = it,
                         onClickedComment = { onClickedComment(it) },
-                        onClickedProfile = {id -> onClickedPostProfile(id)}
+                        onClickedProfile = {id ->
+                            if(id == user?.id){
+                                onClickedOwnPostProfile()
+                            }
+                            else{
+                                onClickedPostProfile(id)
+                            }
+                        }
                     )
 
 

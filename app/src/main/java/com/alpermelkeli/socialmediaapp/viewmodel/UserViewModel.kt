@@ -42,6 +42,18 @@ class UserViewModel(application: Application, private val userRepository: UserRe
             _searchResults.postValue(users)
         }
     }
+    fun followUser(userId:String, followingId:String){
+        userRepository.followUser(userId,followingId){
+            getUser(userId)
+            getTargetUser(followingId)
+        }
+    }
+    fun unfollowUser(userId:String, followingId:String){
+        userRepository.unfollowUser(userId,followingId){
+            getUser(userId)
+            getTargetUser(followingId)
+        }
+    }
 
 
 

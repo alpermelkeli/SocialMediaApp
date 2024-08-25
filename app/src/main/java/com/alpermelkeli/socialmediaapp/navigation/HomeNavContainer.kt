@@ -83,7 +83,7 @@ fun HomeNavContainer(initialTab:HomeRoutes,
             HomeNavHost(
                 navController = navController,
                 onNavigate = onNavigate,
-                startDestination = initialTab
+                startDestination = initialTab,
             )
         }
     }
