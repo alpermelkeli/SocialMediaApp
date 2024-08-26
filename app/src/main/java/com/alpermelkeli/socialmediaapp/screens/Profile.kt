@@ -172,6 +172,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
                     StoriesRow(true, profilePhoto = user?.profilePhoto.toString() ,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
+
                     }
                     
                 }

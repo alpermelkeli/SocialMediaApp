@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit) {
+
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication

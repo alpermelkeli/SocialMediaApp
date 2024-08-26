@@ -10,6 +10,7 @@ import com.alpermelkeli.socialmediaapp.screens.Profile
 import com.alpermelkeli.socialmediaapp.screens.Search
 import com.alpermelkeli.socialmediaapp.screens.SharePost
 
+
 @Composable
 fun HomeNavHost(navController: NavHostController,
                 onNavigate: (route: String) -> Unit,

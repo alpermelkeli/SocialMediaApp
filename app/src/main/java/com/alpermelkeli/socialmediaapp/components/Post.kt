@@ -124,6 +124,7 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
                     .size(40.dp)
                     .clip(CircleShape), data = post.senderPhoto)
 
+
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column(

@@ -34,6 +34,7 @@ import com.alpermelkeli.socialmediaapp.R
 @Composable
 fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
 
+
     LazyRow(modifier = Modifier
         .fillMaxWidth()
         .height(size)
@@ -42,6 +43,7 @@ fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<St
         item {
             if(addCollection){
                 AddCollectionItem(size = size, profilePhoto = profilePhoto){
+
                     onClickedAddCollection()
                 }
             }
@@ -82,6 +84,7 @@ fun AddCollectionItem(size:Dp, profilePhoto: String ,onClickedAddCollection: () 
 
         Text(text = "Add",
             color = MaterialTheme.colorScheme.secondary)
+
     }
 
 }

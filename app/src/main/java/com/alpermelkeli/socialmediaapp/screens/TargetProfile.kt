@@ -181,6 +181,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
 
                     StoriesRow(false, profilePhoto = targetUser?.profilePhoto.toString(),size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
+
                     }
 
                 }

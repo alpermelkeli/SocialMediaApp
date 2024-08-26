@@ -13,6 +13,7 @@ import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
 import com.alpermelkeli.socialmediaapp.screens.SendStory
 import com.alpermelkeli.socialmediaapp.screens.Splash
+
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 
@@ -23,6 +24,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         composable(NavRoutes.Splash.route){
             Splash()
         }
+
 
         composable(NavRoutes.SignUp.route){
 

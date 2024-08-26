@@ -44,6 +44,7 @@ fun StoriesRowItem(size: Dp, isOpened:Boolean, username:String, onClickedStory: 
         Spacer(modifier = Modifier.height(5.dp))
         Text(text = username,
             color = MaterialTheme.colorScheme.secondary)
+
     }
 
 }
