@@ -11,7 +11,7 @@ import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
-import com.alpermelkeli.socialmediaapp.screens.SendPost
+import com.alpermelkeli.socialmediaapp.screens.SendStory
 import com.alpermelkeli.socialmediaapp.screens.Splash
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
@@ -79,7 +79,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ) { backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("uri")
             imageUri?.let {
-                SendPost(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
+                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
             }
         }
 

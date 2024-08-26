@@ -2,7 +2,6 @@ package com.alpermelkeli.socialmediaapp.screens
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,13 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
-import com.alpermelkeli.socialmediaapp.model.Like
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
@@ -48,6 +46,8 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
+    val permissionViewModel = context.permissionViewModel
 
     val storeData = context.storeData
 
@@ -108,9 +108,7 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
         ActivityResultContracts.RequestPermission()
     ) {
         if (it) {
-            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
-
-
+                onCameraClicked()
         } else {
             Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
         }
@@ -119,31 +117,23 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
     SocialMediaAppTheme {
         Scaffold(topBar = {
             HomePageTopBar(isDark = isDark, onClickCamera = {
-                val permissionCheckResult =
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                    onCameraClicked()
-                } else {
-                    // Request a permission
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                }
+                permissionViewModel.checkCameraPermission(context, onGranted = {onCameraClicked()}, onUnGranted = {permissionLauncher.launch(Manifest.permission.CAMERA)})
             },
                 onClickMessages = {
                     Log.d("Direct Message", "Direct Message has been invoked")
                 })
         }) {
             LazyColumn(
-                Modifier.fillMaxSize(),
+                Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
                 state = postColumnScrollState
             ) {
 
                 item {
-                    Spacer(modifier = Modifier.height(90.dp))
 
                     StoriesRow(
                         true,
-                        profilePhoto = user?.profilePhoto.toString(),
                         size = 100.dp,
+                        profilePhoto = user?.profilePhoto.toString(),
                         stories = exampleStories,
                         scrollState = storyRowScrollState,
                         onClickedAddCollection = {},

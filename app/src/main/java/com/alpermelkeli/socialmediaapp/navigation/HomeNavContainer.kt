@@ -51,13 +51,11 @@ fun HomeNavContainer(initialTab:HomeRoutes,
 
     val orientation = LocalConfiguration.current.orientation
 
-    val bottomBarHeight = 80.dp
 
     Scaffold(bottomBar = {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             NavigationBar(
-                containerColor = Color.Transparent,
-                modifier = Modifier.height(bottomBarHeight)
+                containerColor = MaterialTheme.colorScheme.background,
             ) {
                 homeRoutes.forEach {
                     NavigationBarItem(label = {
@@ -78,7 +76,7 @@ fun HomeNavContainer(initialTab:HomeRoutes,
         Row(
             Modifier
                 .fillMaxSize()
-                .padding(bottom = bottomBarHeight)
+                .padding(bottom = it.calculateBottomPadding())
         ) {
             HomeNavHost(
                 navController = navController,

@@ -90,8 +90,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
     Scaffold(
         Modifier
-            .fillMaxSize()
-            .padding(top = 20.dp),
+            .fillMaxSize(),
         topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {
             AuthOperations.logOut()
             onClickedLogOut()

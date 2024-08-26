@@ -33,12 +33,12 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     lifecycleScope.launch {
-                        delay(2000)
                         startDestination = if (AuthOperations.getUser() != null) {
                             NavRoutes.Home.route
                         } else {
                             NavRoutes.Login.route
                         }
+                        delay(2000)
                     }
                 }
 

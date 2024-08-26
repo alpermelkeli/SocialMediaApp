@@ -17,7 +17,7 @@ fun ProfilePostCard(post:Post,modifier: Modifier, onClickedPost:(Post)->Unit){
         shape = ShapeDefaults.ExtraSmall,
     ) {
 
-        ShimmerEffectImage(modifier = Modifier.fillMaxSize(), data = post.images[0])
+        ShimmerEffectImage(modifier = Modifier.fillMaxSize(), data = if(post.images.size>0) post.images[0] else "")
 
     }
 }

@@ -2,5 +2,6 @@
     <string name="app_name">SocialMediaApp</string>
     <string name="home">Home</string>
     <string name="profile">Profile</string>
+    <string name="share">Share</string>
     <string name="search">Search</string>
 </resources>
