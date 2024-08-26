@@ -117,7 +117,8 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
                         ShimmerEffectImage(modifier = Modifier
                             .clip(CircleShape)
-                            .size(90.dp), data = user?.profilePhoto.toString())
+                            .size(90.dp), data = user?.profilePhoto.toString()
+                        )
 
                         Row(
                             Modifier
@@ -162,7 +163,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                 }//Bio side.
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Row(
+                /*Row(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
@@ -170,12 +171,12 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(true, profilePhoto = user?.profilePhoto.toString() ,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+                    StoriesRow(false, profilePhoto = targetUser?.profilePhoto.toString(),size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
 
                     }
                     
-                }
+                }*/
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Spacer(modifier = Modifier

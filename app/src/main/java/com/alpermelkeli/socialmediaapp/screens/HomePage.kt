@@ -48,6 +48,8 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
+    val storiesViewModel = context.storiesViewModel
+
     val permissionViewModel = context.permissionViewModel
 
     val storeData = context.storeData
@@ -79,7 +81,9 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
 
     LaunchedEffect(user) {
-        user?.following?.let { postViewModel.getUserHomePagePosts(it) }
+        user?.following?.let { postViewModel.getUserHomePagePosts(it)
+            storiesViewModel.getHomePageStories(it)
+        }
     }
     var isCommentSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -100,6 +104,10 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
     val storyRowScrollState = rememberLazyListState()
 
     val postColumnScrollState = rememberLazyListState()
+
+
+
+    val stories by storiesViewModel.homePageStories.observeAsState(emptyList())
 
     val exampleStories = listOf("user", "user", "user", "user1", "user2", "user3")
 
@@ -125,7 +133,9 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                 })
         }) {
             LazyColumn(
-                Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding()),
                 state = postColumnScrollState
             ) {
 
@@ -135,7 +145,7 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                         true,
                         size = 100.dp,
                         profilePhoto = user?.profilePhoto.toString(),
-                        stories = exampleStories,
+                        stories = stories,
                         scrollState = storyRowScrollState,
                         onClickedAddCollection = {},
                         onClickedStory = { println(it) })

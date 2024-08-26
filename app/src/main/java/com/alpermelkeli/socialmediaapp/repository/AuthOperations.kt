@@ -8,8 +8,6 @@ object AuthOperations{
 
     private val auth = FirebaseAuth.getInstance()
 
-    private val db = FirebaseFirestore.getInstance()
-
     fun getUser():FirebaseUser?{
         return auth.currentUser
     }
@@ -33,6 +31,7 @@ object AuthOperations{
     }
 
     fun register(email: String, password: String, username: String, callBack: (AuthResults) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val userCollection = db.collection("Users")

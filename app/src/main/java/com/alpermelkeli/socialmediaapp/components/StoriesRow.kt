@@ -30,9 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.model.Story
 
 @Composable
-fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
+fun StoriesRow(addCollection:Boolean, size:Dp, profilePhoto:String, stories:List<Story>, scrollState: LazyListState, onClickedAddCollection:()->Unit, onClickedStory:(Story)->Unit){
 
 
     LazyRow(modifier = Modifier

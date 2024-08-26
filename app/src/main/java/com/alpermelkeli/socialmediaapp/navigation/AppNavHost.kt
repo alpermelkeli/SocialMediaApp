@@ -81,7 +81,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ) { backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("uri")
             imageUri?.let {
-                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
+                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)}, onBackClicked = {navController.popBackStack()})
             }
         }
 
