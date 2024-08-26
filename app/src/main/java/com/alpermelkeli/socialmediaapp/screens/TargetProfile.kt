@@ -179,7 +179,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(false,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+                    StoriesRow(false, profilePhoto = targetUser?.profilePhoto.toString(),size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
                     }
 
@@ -195,8 +195,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
             items(targetUserPosts.chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     rowItems.forEach { post ->

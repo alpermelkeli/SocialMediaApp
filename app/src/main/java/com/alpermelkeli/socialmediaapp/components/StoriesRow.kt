@@ -32,9 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
 
 @Composable
-fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
-
-
+fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
 
     LazyRow(modifier = Modifier
         .fillMaxWidth()
@@ -43,7 +41,7 @@ fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: 
         state = scrollState) {
         item {
             if(addCollection){
-                AddCollectionItem(size = size){
+                AddCollectionItem(size = size, profilePhoto = profilePhoto){
                     onClickedAddCollection()
                 }
             }
@@ -60,10 +58,10 @@ fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: 
 
 }
 @Composable
-fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
+fun AddCollectionItem(size:Dp, profilePhoto: String ,onClickedAddCollection: () -> Unit){
     Column(modifier = Modifier
         .size(size = size)
-        .clickable {onClickedAddCollection() },
+        .clickable { onClickedAddCollection() },
         horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             Modifier.size(size.times(0.7f)),
@@ -73,12 +71,11 @@ fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
                     .clip(CircleShape)
                     .size(size.times(0.7f)))
 
-            Icon(imageVector = Icons.Default.Add, contentDescription = "user",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(size.times(0.6f)),
-                tint = MaterialTheme.colorScheme.secondary
-            )
+            ShimmerEffectImage(modifier = Modifier
+                .clip(CircleShape)
+                .size(size.times(0.6f)),
+                    data = profilePhoto)
+
         }
 
         Spacer(modifier = Modifier.height(5.dp))

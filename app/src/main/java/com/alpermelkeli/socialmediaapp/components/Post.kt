@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
@@ -55,6 +56,7 @@ import java.util.UUID
 @Composable
 fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
     val userViewModel = context.userViewModel
 
     val user by userViewModel.user.observeAsState()
@@ -109,23 +111,18 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(120.dp)
-                    .clickable { onClickedProfile(post.senderId) },
+                    ,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Spacer(modifier = Modifier.width(10.dp))
 
+                /*Image loading with shimmer effect.*/
 
-                Image(
-                    painter = rememberAsyncImagePainter(model = post.senderPhoto,
-                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                        error = painterResource(R.drawable.ic_launcher_background)),
-                    contentDescription = "photo",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                )
+                ShimmerEffectImage(modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape), data = post.senderPhoto)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -140,7 +137,8 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { onClickedProfile(post.senderId) }
                     )
 
                 }
@@ -154,31 +152,19 @@ fun Post(post: Post, onClickedComment: () -> Unit, onClickedProfile:(String)->Un
             )
 
         }
-        //Edit pager state by values.
 
         HorizontalPager(
             state = pagerState, modifier = Modifier
                 .fillMaxWidth()
                 .height(360.dp)
         ) {
-            val painter = rememberAsyncImagePainter(model = images[it],
-                placeholder = painterResource(R.drawable.ic_launcher_background),
-                error = painterResource(R.drawable.ic_launcher_background))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(360.dp),
-                contentAlignment = Alignment.Center
-            ) {
 
-                Image(
-                    painter = painter,
-                    contentDescription = "image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+            /*Image loading with shimmer effect.*/
+            ShimmerEffectImage(modifier = Modifier
+                .fillMaxWidth()
+                .height(360.dp), data = images[it]
+            )
 
-            }
         }
 
         Row(

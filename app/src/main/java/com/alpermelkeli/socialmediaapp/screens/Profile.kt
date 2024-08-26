@@ -46,6 +46,7 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.DefaultOutlinedButton
 import com.alpermelkeli.socialmediaapp.components.ProfilePostCard
 import com.alpermelkeli.socialmediaapp.components.ProfileTopBar
+import com.alpermelkeli.socialmediaapp.components.ShimmerEffectImage
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
@@ -87,7 +88,10 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
     val rowScrollState = rememberLazyListState()
 
-    Scaffold(Modifier.fillMaxSize().padding(top = 20.dp),
+    Scaffold(
+        Modifier
+            .fillMaxSize()
+            .padding(top = 20.dp),
         topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {
             AuthOperations.logOut()
             onClickedLogOut()
@@ -111,14 +115,11 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = user?.profilePhoto.toString()),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(90.dp),
-                            contentScale = ContentScale.Crop
-                        )
+
+                        ShimmerEffectImage(modifier = Modifier
+                            .clip(CircleShape)
+                            .size(90.dp), data = user?.profilePhoto.toString())
+
                         Row(
                             Modifier
                                 .fillMaxHeight()
@@ -170,7 +171,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(true,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+                    StoriesRow(true, profilePhoto = user?.profilePhoto.toString() ,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
 
                     }
                     

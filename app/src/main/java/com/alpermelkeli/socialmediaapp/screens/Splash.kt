@@ -1,6 +1,7 @@
 package com.alpermelkeli.socialmediaapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +22,8 @@ fun Splash() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Image(imageVector = ImageVector.vectorResource(id = if(isDark) R.drawable.instagram_logo_white else R.drawable.instagram_logo_black), contentDescription = "logo")

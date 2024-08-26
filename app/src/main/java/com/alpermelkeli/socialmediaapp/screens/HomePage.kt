@@ -142,6 +142,7 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
                     StoriesRow(
                         true,
+                        profilePhoto = user?.profilePhoto.toString(),
                         size = 100.dp,
                         stories = exampleStories,
                         scrollState = storyRowScrollState,
