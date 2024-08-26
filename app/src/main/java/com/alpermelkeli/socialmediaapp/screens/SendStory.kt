@@ -29,7 +29,7 @@ import com.alpermelkeli.socialmediaapp.model.Post
 import java.util.UUID
 
 @Composable
-fun SendPost(uri: String, onPostSent:()->Unit){
+fun SendStory(uri: String, onPostSent:()->Unit){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
     val postViewModel = context.postsViewModel
     val userViewModel = context.userViewModel
@@ -41,7 +41,6 @@ fun SendPost(uri: String, onPostSent:()->Unit){
         user?.let {
             val uuid = UUID.randomUUID()
             val newPost = Post(uuid.toString(),user!!.id, emptyList(),user!!.profilePhoto,user!!.username, System.currentTimeMillis())
-            postViewModel.uploadPost(newPost, photoUri)
             onPostSent()
         }
     }

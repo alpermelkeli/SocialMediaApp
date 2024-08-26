@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 private val DarkColorScheme = darkColorScheme(
     primary = Black50,
     secondary = Color.White,
-    tertiary = Black50,
+    tertiary = Blue50,
     background = Color.Black,
     onBackground = Color.White,
 )
@@ -23,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Color.White,
     secondary = Black50,
-    tertiary = Color.White,
+    tertiary = Blue50,
     background = Color.White,
     onBackground = Black50
 
@@ -46,11 +46,6 @@ fun SocialMediaAppTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

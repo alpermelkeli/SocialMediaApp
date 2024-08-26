@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,8 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
 
 @Composable
-fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
-
+fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
 
 
     LazyRow(modifier = Modifier
@@ -42,7 +42,8 @@ fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: 
         state = scrollState) {
         item {
             if(addCollection){
-                AddCollectionItem(size = size){
+                AddCollectionItem(size = size, profilePhoto = profilePhoto){
+
                     onClickedAddCollection()
                 }
             }
@@ -59,10 +60,10 @@ fun StoriesRow(addCollection:Boolean,size:Dp,stories:List<String>, scrollState: 
 
 }
 @Composable
-fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
+fun AddCollectionItem(size:Dp, profilePhoto: String ,onClickedAddCollection: () -> Unit){
     Column(modifier = Modifier
         .size(size = size)
-        .clickable {onClickedAddCollection() },
+        .clickable { onClickedAddCollection() },
         horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             Modifier.size(size.times(0.7f)),
@@ -72,15 +73,18 @@ fun AddCollectionItem(size:Dp, onClickedAddCollection: () -> Unit){
                     .clip(CircleShape)
                     .size(size.times(0.7f)))
 
-            Image(imageVector = Icons.Default.Add, contentDescription = "user",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(size.times(0.6f))
-            )
+            ShimmerEffectImage(modifier = Modifier
+                .clip(CircleShape)
+                .size(size.times(0.6f)),
+                    data = profilePhoto)
+
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = "Add")
+
+        Text(text = "Add",
+            color = MaterialTheme.colorScheme.secondary)
+
     }
 
 }

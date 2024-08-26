@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.internal.composableLambdaInstance
 import com.alpermelkeli.socialmediaapp.model.Comment
 import com.alpermelkeli.socialmediaapp.model.Post
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.Collections
@@ -80,16 +82,32 @@ class PostsRepository {
             }
     }
 
-    fun uploadPhotoStorage(userId:String,uri:Uri,callBack: (String) -> Unit){
-         val uuid = UUID.randomUUID()
-         val photoRef = storage.reference.child("/users/posts/${userId}/${uuid}")
-        photoRef.putFile(uri).addOnSuccessListener{
-            val uploadedRef = storage.reference.child("/users/posts/${userId}/${uuid}")
-            uploadedRef.downloadUrl.addOnSuccessListener {
-                callBack(it.toString())
+    fun uploadPhotoStorage(userId: String, uris: List<Uri>, callBack: (List<String>) -> Unit) {
+        val storage = FirebaseStorage.getInstance()
+        val urlList = mutableListOf<String>()
+        val uploadTasks = mutableListOf<Task<Uri>>()
+
+        uris.forEach { uri ->
+            val uuid = UUID.randomUUID().toString()
+            val photoRef = storage.reference.child("/users/posts/$userId/$uuid")
+
+            val uploadTask = photoRef.putFile(uri).continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                // Continue with the download URL task
+                photoRef.downloadUrl
+            }.addOnSuccessListener { downloadUrl ->
+                urlList.add(downloadUrl.toString())
+            }.addOnFailureListener {
+
             }
-        }.addOnFailureListener {
-            //error
+
+            uploadTasks.add(uploadTask)
+        }
+
+        Tasks.whenAllComplete(uploadTasks).addOnCompleteListener {
+            callBack(urlList)
         }
     }
 

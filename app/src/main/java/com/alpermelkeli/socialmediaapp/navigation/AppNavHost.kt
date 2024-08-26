@@ -11,7 +11,9 @@ import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
-import com.alpermelkeli.socialmediaapp.screens.SendPost
+import com.alpermelkeli.socialmediaapp.screens.SendStory
+import com.alpermelkeli.socialmediaapp.screens.Splash
+
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 
@@ -19,6 +21,11 @@ import com.alpermelkeli.socialmediaapp.screens.UserPost
 fun AppNavHost(navController:NavHostController, startDestination:String, initialTab:HomeRoutes){
 
     NavHost(navController = navController , startDestination = startDestination) {
+        composable(NavRoutes.Splash.route){
+            Splash()
+        }
+
+
         composable(NavRoutes.SignUp.route){
 
             SignUp(onRegisteredSuccessfully = {
@@ -74,7 +81,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ) { backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("uri")
             imageUri?.let {
-                SendPost(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
+                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
             }
         }
 
@@ -85,7 +92,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ){backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
             userId?.let {
-                TargetProfile(targetUserId = it, onClickedPost = {navController.navigate("userpost/$it/true")})
+                TargetProfile(targetUserId = it, onClickedPost = {navController.navigate("userpost/$it/true")}, onClickedBack = {navController.popBackStack()})
             }
 
         }

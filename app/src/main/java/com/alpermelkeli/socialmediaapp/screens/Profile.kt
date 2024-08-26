@@ -46,6 +46,7 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.DefaultOutlinedButton
 import com.alpermelkeli.socialmediaapp.components.ProfilePostCard
 import com.alpermelkeli.socialmediaapp.components.ProfileTopBar
+import com.alpermelkeli.socialmediaapp.components.ShimmerEffectImage
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
@@ -87,7 +88,9 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
     val rowScrollState = rememberLazyListState()
 
-    Scaffold(Modifier.fillMaxSize(),
+    Scaffold(
+        Modifier
+            .fillMaxSize(),
         topBar = {ProfileTopBar(user?.username.toString(),onMenuClicked = {
             AuthOperations.logOut()
             onClickedLogOut()
@@ -111,14 +114,11 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = user?.profilePhoto.toString()),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(90.dp),
-                            contentScale = ContentScale.Crop
-                        )
+
+                        ShimmerEffectImage(modifier = Modifier
+                            .clip(CircleShape)
+                            .size(90.dp), data = user?.profilePhoto.toString())
+
                         Row(
                             Modifier
                                 .fillMaxHeight()
@@ -170,7 +170,8 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(true,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+                    StoriesRow(true, profilePhoto = user?.profilePhoto.toString() ,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+
 
                     }
                     
@@ -186,8 +187,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
             items(userPosts.chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     rowItems.forEach { post ->
@@ -220,7 +220,9 @@ fun IndicatorText(number:String,label:String){
         horizontalAlignment = Alignment.CenterHorizontally){
         Text(text = number,
             fontSize = 15.sp,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
 
         Text(text = label,
             fontSize = 15.sp,

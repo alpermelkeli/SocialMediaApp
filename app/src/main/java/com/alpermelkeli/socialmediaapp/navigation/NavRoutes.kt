@@ -1,7 +1,7 @@
 package com.alpermelkeli.socialmediaapp.navigation
 
 sealed class NavRoutes(val route:String){
-
+    object Splash: NavRoutes("splash")
     object Login : NavRoutes("login")
     object LoginWithField : NavRoutes("loginwithfield/{email}")
     object SignUp : NavRoutes("signup")

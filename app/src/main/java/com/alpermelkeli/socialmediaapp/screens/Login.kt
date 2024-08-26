@@ -32,6 +32,7 @@ import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.DefaultButton
 import com.alpermelkeli.socialmediaapp.components.AuthBottom
+import com.alpermelkeli.socialmediaapp.components.ShimmerEffectImage
 import com.alpermelkeli.socialmediaapp.ui.theme.Blue50
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
 
@@ -65,11 +66,9 @@ fun Login(onClickedLogin:(String)->Unit, onClickedSwitchAccounts:()->Unit, onCli
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                Image(painter = rememberAsyncImagePainter(model = profilePhoto.toString()), contentDescription = "user",
-                    modifier = Modifier
-                        .size(85.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop)
+                ShimmerEffectImage(modifier = Modifier
+                    .size(85.dp)
+                    .clip(CircleShape), data = profilePhoto.toString())
 
                 Spacer(modifier = Modifier.height(8.dp))
 

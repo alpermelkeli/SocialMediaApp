@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.ShapeDefaults
@@ -34,11 +35,11 @@ import com.alpermelkeli.socialmediaapp.ui.theme.Grey20
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Search(onUserItemClicked:(String)->Unit) {
+fun Search(onUserItemClicked:(String)->Unit, onClickedOwnUserItem:()->Unit) {
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
-
+    val user by userViewModel.user.observeAsState()
     val searchResults by userViewModel.searchResults.observeAsState(emptyList())
 
     val columnScrollState = rememberLazyListState()
@@ -63,9 +64,9 @@ fun Search(onUserItemClicked:(String)->Unit) {
                 onSearch = { /* Trigger search */ },
                 active = false,
                 onActiveChange = {},
-                colors = SearchBarDefaults.colors(containerColor = Grey20),
-                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "search") },
-                placeholder = { Text(text = "Search") },
+                colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.background,),
+                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "search", tint = MaterialTheme.colorScheme.secondary) },
+                placeholder = { Text(text = "Search", color = MaterialTheme.colorScheme.secondary) },
                 modifier = Modifier.height(50.dp),
                 shape = ShapeDefaults.Small
             ){}
@@ -77,7 +78,13 @@ fun Search(onUserItemClicked:(String)->Unit) {
             state = columnScrollState) {
             items(searchResults){
                 UserItem(profilePhoto = it.profilePhoto, userName = it.username){
-                    onUserItemClicked(it.id)//It gives user id.
+
+                    if(user?.id == it.id){
+                        onClickedOwnUserItem()
+                    }
+                    else{
+                        onUserItemClicked(it.id)
+                    }
                 }
             }
         }

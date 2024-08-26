@@ -36,6 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
+import com.alpermelkeli.socialmediaapp.components.BackTopBar
+import com.alpermelkeli.socialmediaapp.components.DefaultButton
 import com.alpermelkeli.socialmediaapp.components.DefaultOutlinedButton
 import com.alpermelkeli.socialmediaapp.components.ProfilePostCard
 import com.alpermelkeli.socialmediaapp.components.ProfileTopBar
@@ -44,11 +46,13 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
+fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onClickedBack:()->Unit){
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
+
+    val user by userViewModel.user.observeAsState()
 
     val targetUser by userViewModel.targetUser.observeAsState()
 
@@ -72,6 +76,12 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
         }
     }
 
+    val isFollowing by remember {
+        derivedStateOf {
+            user?.following?.any { it == targetUserId }
+        }
+    }
+
     LaunchedEffect(Unit) {
         userViewModel.getTargetUser(targetUserId)
         postViewModel.getTargetUserPosts(targetUserId)
@@ -81,7 +91,9 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
 
     val rowScrollState = rememberLazyListState()
 
-    Scaffold(Modifier.fillMaxSize()) {
+    Scaffold(Modifier.fillMaxSize(), topBar = { BackTopBar {
+        onClickedBack()
+    }}) {
         LazyColumn(Modifier.fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally) {
             item {
@@ -124,17 +136,35 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
                         }
 
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
 
-                    Column(
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)) {
+                        Spacer(modifier = Modifier.width(110.dp))
+                        DefaultButton(modifier = Modifier
+                            .width(250.dp)
+                            .height(40.dp)
+                            , text = if(isFollowing == true) "Unfollow" else "Follow", isEnabled = true) {
+                            if(isFollowing == true){
+                                user?.id?.let { userViewModel.unfollowUser(it, targetUserId) }
+                            }
+                            else{
+                                user?.id?.let { userViewModel.followUser(it,targetUserId) }
+                            }
+                        }
+                    }
+
+                    Row(
                         Modifier
                             .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = targetUser?.about.toString(),
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.width(200.dp),
+                            color = MaterialTheme.colorScheme.secondary
                         )
 
                     }
@@ -149,7 +179,8 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    StoriesRow(false,size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+                    StoriesRow(false, profilePhoto = targetUser?.profilePhoto.toString(),size = 80.dp, stories = exampleStories, scrollState = rowScrollState, onClickedAddCollection = {}) {
+
 
                     }
 
@@ -165,8 +196,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit){
             items(targetUserPosts.chunked(3)) { rowItems ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     rowItems.forEach { post ->

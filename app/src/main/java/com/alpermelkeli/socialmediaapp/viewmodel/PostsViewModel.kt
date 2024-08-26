@@ -49,11 +49,10 @@ class PostsViewModel(application: Application, private val postsRepository: Post
         }
     }
 
-
-    fun uploadPost(post: Post, uri:Uri){
+    fun uploadPost(post: Post, uriList:List<Uri>){
         viewModelScope.launch {
-            postsRepository.uploadPhotoStorage(post.senderId,uri) { url->
-                postsRepository.uploadUserPost(post.copy(images = listOf(url)))
+            postsRepository.uploadPhotoStorage(post.senderId,uriList) { urlList->
+                postsRepository.uploadUserPost(post.copy(images = urlList))
             }
         }
     }

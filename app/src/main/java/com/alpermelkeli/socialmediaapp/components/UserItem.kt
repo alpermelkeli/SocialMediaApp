@@ -1,6 +1,5 @@
 package com.alpermelkeli.socialmediaapp.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,10 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun UserItem(profilePhoto:String, userName:String, onClickUserItem:()->Unit){
@@ -34,10 +31,9 @@ fun UserItem(profilePhoto:String, userName:String, onClickUserItem:()->Unit){
 
         Spacer(modifier = Modifier.width(15.dp))
 
-        Image(painter = rememberAsyncImagePainter(model = profilePhoto), contentDescription = "",
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape))
+        ShimmerEffectImage(modifier = Modifier
+            .size(48.dp)
+            .clip(CircleShape), data = profilePhoto)
 
         Spacer(modifier = Modifier.width(8.dp))
 

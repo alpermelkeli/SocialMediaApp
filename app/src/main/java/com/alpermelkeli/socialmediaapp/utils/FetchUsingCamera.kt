@@ -50,7 +50,7 @@ fun CameraPreview(
 ) {
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     AndroidView(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         factory = { ctx ->
             val previewView = PreviewView(ctx)
             val executor = ContextCompat.getMainExecutor(ctx)
