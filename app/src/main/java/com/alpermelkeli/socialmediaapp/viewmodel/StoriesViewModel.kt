@@ -12,25 +12,25 @@ import kotlinx.coroutines.launch
 
 class StoriesViewModel(application: Application, private val storiesRepository: StoriesRepository) : AndroidViewModel(application) {
 
-    private val _homePageStories : MutableLiveData<List<Story>> = MutableLiveData()
+    private val _homePageStories : MutableLiveData<List<Pair<String, List<Story>>>> = MutableLiveData()
 
-    val homePageStories : LiveData<List<Story>> get() = _homePageStories
+    val homePageStories : LiveData<List<Pair<String, List<Story>>>> get() = _homePageStories
 
-    fun getHomePageStories(following:List<String>){
+    fun getHomePageStories(following: List<String>) {
         viewModelScope.launch {
-            storiesRepository.getHomePageStories(following){
-                _homePageStories.postValue(it)
+            storiesRepository.getHomePageStories(following) { storiesMap ->
+                _homePageStories.postValue(storiesMap)
             }
         }
     }
-    fun uploadStory(story: Story, uri:Uri){
 
+    fun uploadStory(story: Story, uri: Uri) {
         viewModelScope.launch {
-            storiesRepository.uploadStoryStorage(story.senderId,uri){
-                storiesRepository.uploadUserStory(story.copy(image = it))
+            storiesRepository.uploadStoryStorage(story.senderId, uri) { imageUrl ->
+                val updatedStory = story.copy(image = imageUrl)
+                storiesRepository.uploadUserStory(updatedStory)
             }
         }
-
     }
 
 }

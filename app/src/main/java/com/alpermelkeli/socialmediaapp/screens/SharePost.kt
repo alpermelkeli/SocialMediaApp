@@ -69,10 +69,12 @@ fun SharePost(onPermissionDenied: () -> Unit, onBackClicked:()->Unit, onPostsUpl
         }
     }
     val onNextClicked = {
-        val uuid = UUID.randomUUID()
-        val newPost = Post(uuid.toString(),user?.id.toString(), emptyList(),user?.profilePhoto.toString(),user?.username.toString(),System.currentTimeMillis())
-        postsViewModel.uploadPost(newPost,selectedPhotos.map { it.uri })
-        onPostsUploaded()
+        user?.let {
+            val uuid = UUID.randomUUID()
+            val newPost = Post(uuid.toString(),it.id, emptyList(),it.profilePhoto,it.username,System.currentTimeMillis())
+            postsViewModel.uploadPost(newPost,selectedPhotos.map { it.uri })
+            onPostsUploaded()
+        }
     }
 
     LaunchedEffect(Unit) {

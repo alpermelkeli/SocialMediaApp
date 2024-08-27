@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit, onClickedStory:(String)->Unit) {
 
     val scope = rememberCoroutineScope()
 
@@ -109,9 +109,6 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     val stories by storiesViewModel.homePageStories.observeAsState(emptyList())
 
-    val exampleStories = listOf("user", "user", "user", "user1", "user2", "user3")
-
-
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -148,7 +145,9 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                         stories = stories,
                         scrollState = storyRowScrollState,
                         onClickedAddCollection = {},
-                        onClickedStory = { println(it) })
+                        onClickedStory = {
+                            onClickedStory(it)
+                        })
                 }
 
                 items(homePagePosts) {
