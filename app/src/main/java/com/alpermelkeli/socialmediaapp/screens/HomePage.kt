@@ -33,20 +33,30 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
+import com.alpermelkeli.socialmediaapp.components.PullToRefreshLazyColumn
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit, onClickedStory:(String)->Unit) {
 
     val scope = rememberCoroutineScope()
 
+    val isDark = isSystemInDarkTheme()
+
+    val storyRowScrollState = rememberLazyListState()
+
+    val postColumnScrollState = rememberLazyListState()
+
     val context = LocalContext.current.applicationContext as SocialMediaApplication
+
+    val storiesViewModel = context.storiesViewModel
 
     val permissionViewModel = context.permissionViewModel
 
@@ -73,13 +83,17 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     var selectedPost by remember{ mutableStateOf("") }
 
+    val stories by storiesViewModel.homePageStories.observeAsState(emptyList())
+
     LaunchedEffect(Unit) {
         userViewModel.getUser(AuthOperations.getUser()?.uid.toString())
     }
 
 
     LaunchedEffect(user) {
-        user?.following?.let { postViewModel.getUserHomePagePosts(it) }
+        user?.following?.let { postViewModel.getUserHomePagePosts(it)
+            storiesViewModel.getHomePageStories(it)
+        }
     }
     var isCommentSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -95,13 +109,25 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
         commentViewModel.getPostComments(post.postId)
     }
 
-    val isDark = isSystemInDarkTheme()
+    var isRefreshing by remember {
+        mutableStateOf(false)
+    }
 
-    val storyRowScrollState = rememberLazyListState()
+    val onRefresh = {
+        scope.launch {
+            isRefreshing = true
+            delay(3000)
+            isRefreshing = false
+            user?.following?.let {
+                postViewModel.getUserHomePagePosts(it)
+                storiesViewModel.getHomePageStories(it)
+            }
+        }
+    }
 
-    val postColumnScrollState = rememberLazyListState()
 
-    val exampleStories = listOf("user", "user", "user", "user1", "user2", "user3")
+
+
 
 
 
@@ -124,42 +150,50 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                     Log.d("Direct Message", "Direct Message has been invoked")
                 })
         }) {
-            LazyColumn(
-                Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
-                state = postColumnScrollState
-            ) {
 
-                item {
+            PullToRefreshLazyColumn(
 
-                    StoriesRow(
-                        true,
-                        size = 100.dp,
-                        profilePhoto = user?.profilePhoto.toString(),
-                        stories = exampleStories,
-                        scrollState = storyRowScrollState,
-                        onClickedAddCollection = {},
-                        onClickedStory = { println(it) })
-                }
+                lazyListState = postColumnScrollState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding()),
 
-                items(homePagePosts) {
-                    Post(post = it,
-                        onClickedComment = { onClickedComment(it) },
-                        onClickedProfile = {id ->
-                            if(id == user?.id){
-                                onClickedOwnPostProfile()
-                            }
-                            else{
-                                onClickedPostProfile(id)
-                            }
+                items = homePagePosts,
+
+                content = {Post(post = it,
+                    onClickedComment = { onClickedComment(it) },
+                    onClickedProfile = {id ->
+                        if(id == user?.id){
+                            onClickedOwnPostProfile()
                         }
-                    )
+                        else{
+                            onClickedPostProfile(id)
+                        }
+                    }
+                )},
+
+                staticContent = {StoriesRow(
+                    true,
+                    size = 100.dp,
+                    profilePhoto = user?.profilePhoto.toString(),
+                    stories = stories,
+                    scrollState = storyRowScrollState,
+                    onClickedAddCollection = {},
+                    onClickedStory = {
+                        onClickedStory(it)
+                    })}
+                ,
+                isRefreshing = isRefreshing,
+
+                onRefresh = { onRefresh() }
+            )
 
 
-                }
-            }
             if(isCommentSheetOpen){
                 CommentBottomSheet(selectedPost,comments = comments, sheetState = commentSheetState, onDismissRequest = {isCommentSheetOpen = false})
             }
+
         }
     }
 

@@ -35,12 +35,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.BackTopBar
 import com.alpermelkeli.socialmediaapp.components.DefaultButton
 import com.alpermelkeli.socialmediaapp.components.DefaultOutlinedButton
 import com.alpermelkeli.socialmediaapp.components.ProfilePostCard
 import com.alpermelkeli.socialmediaapp.components.ProfileTopBar
+import com.alpermelkeli.socialmediaapp.components.ShimmerEffectImage
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
@@ -112,14 +114,11 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = targetUser?.profilePhoto.toString()),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(90.dp),
-                            contentScale = ContentScale.Crop
+                        ShimmerEffectImage(modifier = Modifier
+                            .clip(CircleShape)
+                            .size(90.dp), data = (targetUser?.profilePhoto.toString())
                         )
+
                         Row(
                             Modifier
                                 .fillMaxHeight()
@@ -171,7 +170,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
                 }//Bio side.
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Row(
+                /*Row(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
@@ -184,7 +183,7 @@ fun TargetProfile(targetUserId:String, onClickedPost:(postIndex:Int)->Unit, onCl
 
                     }
 
-                }
+                }*/
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Spacer(modifier = Modifier

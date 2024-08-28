@@ -15,6 +15,7 @@ import com.alpermelkeli.socialmediaapp.screens.SendStory
 import com.alpermelkeli.socialmediaapp.screens.Splash
 
 import com.alpermelkeli.socialmediaapp.screens.TargetProfile
+import com.alpermelkeli.socialmediaapp.screens.TargetStory
 import com.alpermelkeli.socialmediaapp.screens.UserPost
 
 @Composable
@@ -81,7 +82,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ) { backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("uri")
             imageUri?.let {
-                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)})
+                SendStory(imageUri, onPostSent = {navController.popBackStack(route = NavRoutes.Home.route, inclusive = false)}, onBackClicked = {navController.popBackStack()})
             }
         }
 
@@ -95,6 +96,16 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
                 TargetProfile(targetUserId = it, onClickedPost = {navController.navigate("userpost/$it/true")}, onClickedBack = {navController.popBackStack()})
             }
 
+        }
+        composable(NavRoutes.TargetStory.route,
+            arguments = listOf(navArgument("userId"){
+                type = NavType.StringType
+            })
+        ){backstackentry->
+            val userId = backstackentry.arguments?.getString("userId")
+            userId?.let {
+                TargetStory(it, onBackClicked = {navController.popBackStack()})
+            }
         }
 
         composable(NavRoutes.Home.route){

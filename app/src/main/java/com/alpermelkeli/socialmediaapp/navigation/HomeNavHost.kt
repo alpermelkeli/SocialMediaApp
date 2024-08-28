@@ -24,7 +24,8 @@ fun HomeNavHost(navController: NavHostController,
 
     NavHost(navController = navController, startDestination = startDestination.route) {
         composable(HomeRoutes.HomePage.route){
-            HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)}, onClickedPostProfile = {onNavigate("targetprofile/$it")}, onClickedOwnPostProfile = {onClickedOwn()})
+            HomePage(onCameraClicked = {onNavigate(NavRoutes.Camera.route)}, onClickedPostProfile = {onNavigate("targetprofile/$it")}, onClickedOwnPostProfile = {onClickedOwn()},
+                onClickedStory = {onNavigate("targetstory/"+ it)})
         }
         composable(HomeRoutes.Profile.route){
             Profile(onClickedLogOut = {onNavigate(NavRoutes.Login.route)}, onClickedPost = {onNavigate(

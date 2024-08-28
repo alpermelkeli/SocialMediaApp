@@ -19,30 +19,33 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.model.Story
 
 
 @Composable
-fun StoriesRowItem(size: Dp, isOpened:Boolean, username:String, onClickedStory: (String) -> Unit){
+fun StoriesRowItem(size: Dp, isOpened:Boolean, story: Story, onClickedStory: (Story) -> Unit){
     Column(modifier = Modifier
         .size(size = size)
-        .clickable { onClickedStory(username) },
+        .clickable { onClickedStory(story) },
         horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             Modifier.size(size.times(0.7f)),
             contentAlignment = Alignment.Center) {
-            Image(imageVector = ImageVector.vectorResource(id = if (isOpened) R.drawable.opened_story_oval else R.drawable.story_oval), contentDescription = "story",
-                modifier = Modifier.clip(CircleShape)
-                    .size(size.times(0.7f)))
 
-            Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_background), contentDescription = "user",
+            Image(imageVector = ImageVector.vectorResource(id = if (isOpened) R.drawable.opened_story_oval else R.drawable.story_oval), contentDescription = "story",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(size.times(0.6f))
-            )
+                    .size(size.times(0.7f)))
+
+            ShimmerEffectImage(modifier = Modifier
+                .clip(CircleShape)
+                .size(size.times(0.6f)), data = story.profilePhoto)
+
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = username,
+
+        Text(text = story.username,
             color = MaterialTheme.colorScheme.secondary)
 
     }

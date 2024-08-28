@@ -30,9 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.model.Story
 
 @Composable
-fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<String>, scrollState: LazyListState, onClickedAddCollection:()->Unit,onClickedStory:(String)->Unit){
+fun StoriesRow(addCollection:Boolean, size:Dp, profilePhoto:String,stories: List<Pair<String, List<Story>>>, scrollState: LazyListState, onClickedAddCollection:()->Unit,     onClickedStory: (String) -> Unit
+){
 
 
     LazyRow(modifier = Modifier
@@ -48,17 +50,17 @@ fun StoriesRow(addCollection:Boolean,size:Dp,profilePhoto:String,stories:List<St
                 }
             }
         }
-        items(stories){
+        items(stories) { pair ->
 
-
-            StoriesRowItem(size,false,it){
-                onClickedStory(it)
+            StoriesRowItem(size, false, pair.second[0]) {
+                    onClickedStory(it.senderId)
             }
         }
-
     }
 
 }
+
+
 @Composable
 fun AddCollectionItem(size:Dp, profilePhoto: String ,onClickedAddCollection: () -> Unit){
     Column(modifier = Modifier

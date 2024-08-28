@@ -6,12 +6,14 @@ import com.alpermelkeli.socialmediaapp.repository.GalleryRepository
 import com.alpermelkeli.socialmediaapp.repository.LikesRepository
 import com.alpermelkeli.socialmediaapp.repository.PostsRepository
 import com.alpermelkeli.socialmediaapp.repository.StoreData
+import com.alpermelkeli.socialmediaapp.repository.StoriesRepository
 import com.alpermelkeli.socialmediaapp.repository.UserRepository
 import com.alpermelkeli.socialmediaapp.viewmodel.CommentsViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.GalleryViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.LikesViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.PermissionViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.PostsViewModel
+import com.alpermelkeli.socialmediaapp.viewmodel.StoriesViewModel
 import com.alpermelkeli.socialmediaapp.viewmodel.UserViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.auth.User
@@ -26,11 +28,13 @@ class SocialMediaApplication: Application() {
     lateinit var likesViewModel: LikesViewModel
     lateinit var commentsViewModel:CommentsViewModel
     lateinit var galleryViewModel: GalleryViewModel
+    lateinit var storiesViewModel: StoriesViewModel
     private lateinit var galleryRepository: GalleryRepository
     private lateinit var userRepository: UserRepository
     private lateinit var postRepository: PostsRepository
     private lateinit var likesRepository: LikesRepository
     private lateinit var commentsRepository: CommentsRepository
+    private lateinit var storiesRepository: StoriesRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -46,6 +50,7 @@ class SocialMediaApplication: Application() {
         likesRepository = LikesRepository()
         commentsRepository = CommentsRepository()
         galleryRepository = GalleryRepository(this.applicationContext)
+        storiesRepository = StoriesRepository()
         storeData = StoreData(this)
         permissionViewModel = PermissionViewModel(this)
         userViewModel = UserViewModel(application = this, userRepository)
@@ -53,5 +58,6 @@ class SocialMediaApplication: Application() {
         likesViewModel = LikesViewModel(this, likesRepository)
         commentsViewModel = CommentsViewModel(application = this,commentsRepository)
         galleryViewModel = GalleryViewModel(this, galleryRepository)
+        storiesViewModel = StoriesViewModel(this,storiesRepository)
     }
 }

@@ -14,7 +14,6 @@ import java.util.UUID
 
 class PostsRepository {
     private val db = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
     fun getUserHomePagePosts(followings: List<String>, callBack: (List<Post>) -> Unit) {
         if (followings.isEmpty()) {
             callBack(emptyList())
