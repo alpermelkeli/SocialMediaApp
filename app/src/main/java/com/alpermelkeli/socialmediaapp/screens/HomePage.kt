@@ -33,10 +33,12 @@ import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.CommentBottomSheet
 import com.alpermelkeli.socialmediaapp.components.HomePageTopBar
 import com.alpermelkeli.socialmediaapp.components.Post
+import com.alpermelkeli.socialmediaapp.components.PullToRefreshLazyColumn
 import com.alpermelkeli.socialmediaapp.components.StoriesRow
 import com.alpermelkeli.socialmediaapp.model.Post
 import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 import com.alpermelkeli.socialmediaapp.ui.theme.SocialMediaAppTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +47,12 @@ import kotlinx.coroutines.launch
 fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit, onClickedStory:(String)->Unit) {
 
     val scope = rememberCoroutineScope()
+
+    val isDark = isSystemInDarkTheme()
+
+    val storyRowScrollState = rememberLazyListState()
+
+    val postColumnScrollState = rememberLazyListState()
 
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
@@ -75,6 +83,8 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     var selectedPost by remember{ mutableStateOf("") }
 
+    val stories by storiesViewModel.homePageStories.observeAsState(emptyList())
+
     LaunchedEffect(Unit) {
         userViewModel.getUser(AuthOperations.getUser()?.uid.toString())
     }
@@ -99,15 +109,26 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
         commentViewModel.getPostComments(post.postId)
     }
 
-    val isDark = isSystemInDarkTheme()
+    var isRefreshing by remember {
+        mutableStateOf(false)
+    }
 
-    val storyRowScrollState = rememberLazyListState()
+    val onRefresh = {
+        scope.launch {
+            isRefreshing = true
+            delay(3000)
+            isRefreshing = false
+            user?.following?.let {
+                postViewModel.getUserHomePagePosts(it)
+                storiesViewModel.getHomePageStories(it)
+            }
+        }
+    }
 
-    val postColumnScrollState = rememberLazyListState()
 
 
 
-    val stories by storiesViewModel.homePageStories.observeAsState(emptyList())
+
 
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -129,46 +150,50 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                     Log.d("Direct Message", "Direct Message has been invoked")
                 })
         }) {
-            LazyColumn(
-                Modifier
+
+            PullToRefreshLazyColumn(
+
+                lazyListState = postColumnScrollState,
+                modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding()),
-                state = postColumnScrollState
-            ) {
+                    .padding(top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding()),
 
-                item {
+                items = homePagePosts,
 
-                    StoriesRow(
-                        true,
-                        size = 100.dp,
-                        profilePhoto = user?.profilePhoto.toString(),
-                        stories = stories,
-                        scrollState = storyRowScrollState,
-                        onClickedAddCollection = {},
-                        onClickedStory = {
-                            onClickedStory(it)
-                        })
-                }
-
-                items(homePagePosts) {
-                    Post(post = it,
-                        onClickedComment = { onClickedComment(it) },
-                        onClickedProfile = {id ->
-                            if(id == user?.id){
-                                onClickedOwnPostProfile()
-                            }
-                            else{
-                                onClickedPostProfile(id)
-                            }
+                content = {Post(post = it,
+                    onClickedComment = { onClickedComment(it) },
+                    onClickedProfile = {id ->
+                        if(id == user?.id){
+                            onClickedOwnPostProfile()
                         }
-                    )
+                        else{
+                            onClickedPostProfile(id)
+                        }
+                    }
+                )},
+
+                staticContent = {StoriesRow(
+                    true,
+                    size = 100.dp,
+                    profilePhoto = user?.profilePhoto.toString(),
+                    stories = stories,
+                    scrollState = storyRowScrollState,
+                    onClickedAddCollection = {},
+                    onClickedStory = {
+                        onClickedStory(it)
+                    })}
+                ,
+                isRefreshing = isRefreshing,
+
+                onRefresh = { onRefresh() }
+            )
 
 
-                }
-            }
             if(isCommentSheetOpen){
                 CommentBottomSheet(selectedPost,comments = comments, sheetState = commentSheetState, onDismissRequest = {isCommentSheetOpen = false})
             }
+
         }
     }
 

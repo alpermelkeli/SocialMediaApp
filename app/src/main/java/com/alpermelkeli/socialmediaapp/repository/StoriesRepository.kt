@@ -16,12 +16,13 @@ class StoriesRepository {
             callBack(emptyList())
             return
         }
-
+        val oneDayInMillis = 86400000
+        val currentTime = System.currentTimeMillis()
+        val oneDayAgo = currentTime-oneDayInMillis
         db.collection("Stories")
             .whereIn("senderId", following)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                // Map documents to Story objects
                 val stories = querySnapshot.documents.mapNotNull { document ->
                     val storyId = document.id
                     val senderId = document.getString("senderId") ?: return@mapNotNull null
@@ -32,10 +33,8 @@ class StoriesRepository {
                     Story(storyId, senderId, senderProfilePhoto, senderUsername, image, timestamp)
                 }
 
-                // Group stories by senderId
                 val groupedStories = stories.groupBy { it.senderId }
 
-                // Convert grouped stories to a list of pairs
                 val result = groupedStories.map { Pair(it.key, it.value) }
 
                 callBack(result)

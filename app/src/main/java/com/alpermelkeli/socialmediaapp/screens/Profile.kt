@@ -59,7 +59,6 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
 
     val user by userViewModel.user.observeAsState()
 
-
     val postViewModel = context.postsViewModel
 
     val userPosts by postViewModel.userPosts.observeAsState(emptyList())
@@ -84,9 +83,6 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
         postViewModel.getUserPosts(user?.id.toString())
     }
 
-    val exampleStories = listOf("user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2","user2",)
-
-    val rowScrollState = rememberLazyListState()
 
     Scaffold(
         Modifier
@@ -96,13 +92,13 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
             onClickedLogOut()
         }
         )}) {
-        LazyColumn(Modifier.fillMaxHeight(),
+        LazyColumn(Modifier.fillMaxHeight().padding(top = it.calculateTopPadding(),
+            bottom = it.calculateBottomPadding()),
             horizontalAlignment = Alignment.CenterHorizontally) {
             item {
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 90.dp)
                         .padding(horizontal = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center

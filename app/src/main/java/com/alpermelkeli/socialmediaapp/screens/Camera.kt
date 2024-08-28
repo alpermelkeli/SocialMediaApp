@@ -1,5 +1,6 @@
 package com.alpermelkeli.socialmediaapp.screens
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -18,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +35,7 @@ import com.alpermelkeli.socialmediaapp.R
 import com.alpermelkeli.socialmediaapp.utils.FetchUsingCamera
 import com.alpermelkeli.socialmediaapp.utils.takePhoto
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Camera(onPhotoSaved:(Uri)->Unit, onClickBack:()->Unit) {
     val context = LocalContext.current
@@ -53,90 +56,95 @@ fun Camera(onPhotoSaved:(Uri)->Unit, onClickBack:()->Unit) {
     val toggleFlash = {
         isFlashOpen = !isFlashOpen
     }
+    Scaffold {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(bottom = it.calculateBottomPadding(),
+                    top = it.calculateTopPadding()),
+            contentAlignment = Alignment.Center) {
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center) {
-
-        FetchUsingCamera(
-            cameraSelector = cameraSelector,
+            FetchUsingCamera(
+                cameraSelector = cameraSelector,
                 onUseCaseCreated = { capture ->
                     imageCapture = capture
                 }
-        )
+            )
 
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 10.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { onClickBack() }) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { onClickBack() }) {
 
-                    Icon(imageVector = Icons.Default.Close, contentDescription = "close",
-                        tint = MaterialTheme.colorScheme.secondary)
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "close",
+                            tint = MaterialTheme.colorScheme.secondary)
+                    }
+
+                    IconButton(onClick = { toggleFlash() }) {
+                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.flash_button), contentDescription = "Flash",
+                            tint = MaterialTheme.colorScheme.secondary)
+                    }
+
                 }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically) {
 
-                IconButton(onClick = { toggleFlash() }) {
-                    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.flash_button), contentDescription = "Flash",
-                        tint = MaterialTheme.colorScheme.secondary)
-                }
+                    IconButton(onClick = { /*TODO*/ },
+                        Modifier.size(40.dp)) {
+                        Icon(modifier = Modifier.size(40.dp),
+                            imageVector = Icons.Default.AccountBox, contentDescription = "Gallery",
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
 
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-
-                IconButton(onClick = { /*TODO*/ },
-                    Modifier.size(40.dp)) {
-                    Icon(modifier = Modifier.size(40.dp),
-                        imageVector = Icons.Default.AccountBox, contentDescription = "Gallery",
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-
-                Button(
-                    colors = ButtonDefaults.buttonColors().copy(containerColor = MaterialTheme.colorScheme.secondary),
-                    modifier = Modifier.size(75.dp),
-                    onClick = {
-                        imageCapture?.let {
-                            takePhoto(context, it) { uri ->
-                                onPhotoSaved(uri)
+                    Button(
+                        colors = ButtonDefaults.buttonColors().copy(containerColor = MaterialTheme.colorScheme.secondary),
+                        modifier = Modifier.size(75.dp),
+                        onClick = {
+                            imageCapture?.let {
+                                takePhoto(context, it) { uri ->
+                                    onPhotoSaved(uri)
+                                }
                             }
                         }
+                    ) {
+                        Icon(modifier = Modifier.size(75.dp),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.take_photo_button), contentDescription = "take photo",
+                            tint = MaterialTheme.colorScheme.secondary)
+
                     }
-                ) {
-                    Icon(modifier = Modifier.size(75.dp),
-                        imageVector = ImageVector.vectorResource(id = R.drawable.take_photo_button), contentDescription = "take photo",
-                        tint = MaterialTheme.colorScheme.secondary)
+
+                    IconButton(onClick = { toggleCamera() },
+                        modifier = Modifier.size(40.dp)) {
+                        Icon(modifier = Modifier.size(40.dp),imageVector = Icons.Default.Refresh, contentDescription = "camera",
+                            tint = MaterialTheme.colorScheme.secondary)
+                    }
 
                 }
 
-                IconButton(onClick = { toggleCamera() },
-                    modifier = Modifier.size(40.dp)) {
-                    Icon(modifier = Modifier.size(40.dp),imageVector = Icons.Default.Refresh, contentDescription = "camera",
-                        tint = MaterialTheme.colorScheme.secondary)
-                }
+
 
             }
-
-
-
         }
     }
+
+
 
 
 }

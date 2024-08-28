@@ -104,7 +104,7 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         ){backstackentry->
             val userId = backstackentry.arguments?.getString("userId")
             userId?.let {
-                TargetStory(it)
+                TargetStory(it, onBackClicked = {navController.popBackStack()})
             }
         }
 
