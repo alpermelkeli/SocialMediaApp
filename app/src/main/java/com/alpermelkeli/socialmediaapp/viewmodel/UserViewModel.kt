@@ -1,5 +1,6 @@
 package com.alpermelkeli.socialmediaapp.viewmodel
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -38,21 +39,35 @@ class UserViewModel(application: Application, private val userRepository: UserRe
         }
     }
     fun searchUsers(username: String) {
-        userRepository.searchUsersByUsername(username) { users ->
-            _searchResults.postValue(users)
+        viewModelScope.launch {
+            userRepository.searchUsersByUsername(username) { users ->
+                _searchResults.postValue(users)
+            }
         }
     }
     fun followUser(userId:String, followingId:String){
-        userRepository.followUser(userId,followingId){
-            getUser(userId)
-            getTargetUser(followingId)
+        viewModelScope.launch {
+            userRepository.followUser(userId,followingId){
+                getUser(userId)
+                getTargetUser(followingId)
+            }
         }
     }
     fun unfollowUser(userId:String, followingId:String){
-        userRepository.unfollowUser(userId,followingId){
-            getUser(userId)
-            getTargetUser(followingId)
+        viewModelScope.launch {
+            userRepository.unfollowUser(userId,followingId){
+                getUser(userId)
+                getTargetUser(followingId)
+            }
         }
+    }
+    fun updateProfilePhoto(userId: String, uri: Uri){
+        viewModelScope.launch {
+            userRepository.uploadProfilePhotoStorage(userId,uri){
+                userRepository.uploadProfilePhoto(userId,it)
+            }
+        }
+
     }
 
 

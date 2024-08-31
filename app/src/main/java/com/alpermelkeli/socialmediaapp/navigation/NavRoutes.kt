@@ -11,5 +11,6 @@ sealed class NavRoutes(val route:String){
     object SendPost : NavRoutes("sendpost/{uri}")
     object TargetProfile : NavRoutes("targetprofile/{userId}")
     object TargetStory : NavRoutes("targetstory/{userId}")
+    object EditProfile : NavRoutes("editprofile")
 
 }

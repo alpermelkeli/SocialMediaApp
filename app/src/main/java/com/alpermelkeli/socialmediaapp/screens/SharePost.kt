@@ -2,6 +2,7 @@ package com.alpermelkeli.socialmediaapp.screens
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,7 +56,7 @@ fun SharePost(onPermissionDenied: () -> Unit, onBackClicked:()->Unit, onPostsUpl
 
     val selectedPhotos by galleryViewModel.selectedPhotos.observeAsState(emptyList())
 
-    var selectedPhoto by remember { mutableStateOf(GalleryPhoto(Uri.EMPTY,false)) }
+    var selectedPhoto by remember { mutableStateOf(if(photos.isNotEmpty()) photos[0] else GalleryPhoto(Uri.EMPTY,false)) }
 
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -81,7 +82,13 @@ fun SharePost(onPermissionDenied: () -> Unit, onBackClicked:()->Unit, onPostsUpl
         permissionViewModel.checkStoragePermission(
             context,
             onGranted = { galleryViewModel.getPhotos() },
-            onUnGranted = { permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES) }
+            onUnGranted = { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            }
+                else{
+                    permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+            }
         )
     }
     Scaffold(Modifier.fillMaxSize(), topBar = {SharePostTopBar(onBackClicked = {onBackClicked()}, onNextClicked = {onNextClicked()})}) {

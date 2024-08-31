@@ -105,6 +105,9 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     val onClickedComment = {post: Post ->
         isCommentSheetOpen = true
+        scope.launch {
+            commentSheetState.expand()
+        }
         selectedPost = post.postId
         commentViewModel.getPostComments(post.postId)
     }

@@ -14,6 +14,9 @@ class GalleryViewModel(application: Application, private val galleryRepository: 
     private val _selectedPhotos: MutableLiveData<List<GalleryPhoto>> = MutableLiveData()
     val selectedPhotos: LiveData<List<GalleryPhoto>> get() = _selectedPhotos
 
+    private val _selectedProfilePhoto : MutableLiveData<GalleryPhoto> = MutableLiveData()
+    val selectedProfilePhoto : LiveData<GalleryPhoto> get() = _selectedProfilePhoto
+
     init {
         _selectedPhotos.value = emptyList()
     }
@@ -32,7 +35,11 @@ class GalleryViewModel(application: Application, private val galleryRepository: 
                 it
             }
         } ?: emptyList()
-        _photos.postValue(updatedList.sortedByDescending { it.isSelected })
+        _photos.postValue(updatedList)
         _selectedPhotos.postValue(updatedList.filter { it.isSelected })
+    }
+
+    fun selectProfilePhoto(photo:GalleryPhoto){
+        _selectedProfilePhoto.postValue(photo)
     }
 }

@@ -49,13 +49,21 @@ fun StoryTopBar(
     }
 
     LaunchedEffect(currentStoryIndex, totalStories) {
+
         progressValues.forEachIndexed { index, animatable ->
-            if (index != currentStoryIndex) {
+
+            if (index > currentStoryIndex) {
                 animatable.snapTo(0f)
+            }
+            else if(index < currentStoryIndex){
+                animatable.snapTo(1f)
             }
         }
 
         progressValues.getOrNull(currentStoryIndex)?.let { animatable ->
+
+            animatable.snapTo(0f)
+
             animatable.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
@@ -74,11 +82,13 @@ fun StoryTopBar(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             for (i in 0 until totalStories) {
                 LinearProgressIndicator(
-                    progress = progressValues.getOrNull(i)?.value ?: 0f,
+                    progress = { progressValues.getOrNull(i)?.value ?: 0f },
                     modifier = Modifier
                         .padding(2.dp)
                         .weight(1f),
-                    color = Color.White
+                    color = Color.White,
+                    trackColor = Color.DarkGray,
+
                 )
             }
         }

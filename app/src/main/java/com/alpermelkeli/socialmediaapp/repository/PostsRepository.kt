@@ -88,7 +88,7 @@ class PostsRepository {
 
         uris.forEach { uri ->
             val uuid = UUID.randomUUID().toString()
-            val photoRef = storage.reference.child("/users/posts/$userId/$uuid")
+            val photoRef = storage.reference.child("/users/$userId/posts/$uuid")
 
             val uploadTask = photoRef.putFile(uri).continueWithTask { task ->
                 if (!task.isSuccessful) {

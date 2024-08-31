@@ -52,7 +52,7 @@ import com.alpermelkeli.socialmediaapp.repository.AuthOperations
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
+fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit, onClickedEditProfile:()->Unit){
     val context = LocalContext.current.applicationContext as SocialMediaApplication
 
     val userViewModel = context.userViewModel
@@ -151,7 +151,7 @@ fun Profile(onClickedLogOut:()->Unit, onClickedPost:(postIndex:Int)->Unit){
                                 .fillMaxWidth()
                                 .height(35.dp), text = "Edit Profile"
                         ) {
-
+                            onClickedEditProfile()
                         }
 
 

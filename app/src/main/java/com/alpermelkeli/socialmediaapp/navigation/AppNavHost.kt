@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.alpermelkeli.socialmediaapp.screens.Camera
+import com.alpermelkeli.socialmediaapp.screens.EditProfile
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
 import com.alpermelkeli.socialmediaapp.screens.SignUp
@@ -116,6 +117,11 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
             Camera(onPhotoSaved = {navController.navigate("sendpost/${Uri.encode(it.toString())}")},
                 onClickBack = {navController.popBackStack()})
         }
+
+        composable(NavRoutes.EditProfile.route){
+            EditProfile()
+        }
+
     }
 
 

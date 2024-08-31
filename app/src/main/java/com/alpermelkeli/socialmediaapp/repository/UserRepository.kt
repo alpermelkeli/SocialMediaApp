@@ -1,9 +1,13 @@
 package com.alpermelkeli.socialmediaapp.repository
 
+import android.net.Uri
+import android.util.Log
 import com.alpermelkeli.socialmediaapp.model.User
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class UserRepository {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -99,6 +103,30 @@ class UserRepository {
             }
             .addOnFailureListener { e ->
                 e.printStackTrace()
+            }
+    }
+
+    fun uploadProfilePhotoStorage(userId:String, uri:Uri, callBack: (String) -> Unit){
+        val storage = FirebaseStorage.getInstance()
+        val reference = storage.getReference("Users/$userId/profile/profile_photo")
+        reference.putFile(uri).addOnSuccessListener {
+            reference.downloadUrl.addOnSuccessListener { downloadUrl->
+             callBack(downloadUrl.toString())
+            }
+        }
+
+    }
+
+    fun uploadProfilePhoto(userId:String,profilePhotoUrl:String){
+        db.collection("Users")
+            .document(userId)
+            .update("profilePhoto", profilePhotoUrl)
+            .addOnSuccessListener {
+                Log.d("uploadTask", "your upload task has been completed")
+            }
+            .addOnFailureListener {
+                Log.d("uploadTask", "your upload task has failure ${it.message}")
+
             }
     }
 
