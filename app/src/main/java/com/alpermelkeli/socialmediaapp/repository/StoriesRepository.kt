@@ -5,10 +5,13 @@ import android.util.Log
 import com.alpermelkeli.socialmediaapp.model.Story
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
-class StoriesRepository {
+class StoriesRepository(private val userRepository: UserRepository) {
     private val db : FirebaseFirestore = FirebaseFirestore.getInstance()
 
     fun getHomePageStories(following: List<String>, callBack: (List<Pair<String, List<Story>>>) -> Unit) {
@@ -23,24 +26,35 @@ class StoriesRepository {
             .whereIn("senderId", following)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val stories = querySnapshot.documents.mapNotNull { document ->
-                    val storyId = document.id
-                    val senderId = document.getString("senderId") ?: return@mapNotNull null
-                    val senderUsername = document.getString("username") ?: ""
-                    val senderProfilePhoto = document.getString("profilePhoto") ?: ""
-                    val image = document.getString("image") ?: ""
-                    val timestamp = document.getLong("timestamp") ?: 0
-                    Story(storyId, senderId, senderProfilePhoto, senderUsername, image, timestamp)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val stories = querySnapshot.documents.mapNotNull { document ->
+                        val storyId = document.id
+                        val senderId = document.getString("senderId") ?: return@mapNotNull null
+                        val image = document.getString("image") ?: ""
+                        val createdAt = document.getLong("createdAt") ?: 0
+                        val user = userRepository.getUserDocument(senderId)
+                        user?.let {
+                            Story(storyId, senderId, it.profilePhoto, it.username, image, createdAt)
+                        }
+                    }
+
+                    withContext(Dispatchers.Main){
+                        val groupedStories = stories.sortedBy { it.createdAt }.groupBy { it.senderId }
+                        val sortedGroupedStories = groupedStories.entries
+                            .map { (senderId, storyList) ->
+                                Pair(senderId, storyList)
+                            }
+                            .sortedByDescending { (_, stories) ->
+                                stories.maxOfOrNull { it.createdAt } ?: 0
+                            }
+                        callBack(sortedGroupedStories)
+                    }
                 }
 
-                val groupedStories = stories.groupBy { it.senderId }
 
-                val result = groupedStories.map { Pair(it.key, it.value) }
-
-                callBack(result)
             }
             .addOnFailureListener {
-                callBack(emptyList()) // Return an empty list on failure
+                callBack(emptyList())
             }
     }
 
@@ -52,9 +66,7 @@ class StoriesRepository {
         val storyByUser = mapOf(
             "image" to story.image,
             "senderId" to story.senderId,
-            "profilePhoto" to story.profilePhoto,
-            "username" to story.username,
-            "timestamp" to story.timestamp
+            "createdAt" to story.createdAt
         )
 
         postCollection.add(storyByUser)
@@ -66,7 +78,7 @@ class StoriesRepository {
     fun uploadStoryStorage(userId: String, uri: Uri, callBack: (String) -> Unit) {
         val storage = FirebaseStorage.getInstance()
         val uuid = UUID.randomUUID().toString()
-        val photoRef = storage.reference.child("/users/stories/$userId/$uuid")
+        val photoRef = storage.reference.child("/Users/$userId/stories/$uuid")
 
         photoRef.putFile(uri).addOnSuccessListener {
             photoRef.downloadUrl.addOnSuccessListener { downloadUrl ->

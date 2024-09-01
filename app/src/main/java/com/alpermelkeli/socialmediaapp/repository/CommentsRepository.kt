@@ -3,8 +3,12 @@ package com.alpermelkeli.socialmediaapp.repository
 import android.util.Log
 import com.alpermelkeli.socialmediaapp.model.Comment
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CommentsRepository {
+class CommentsRepository(private val userRepository: UserRepository) {
     private val db = FirebaseFirestore.getInstance()
 
     fun sendComment(postId:String, comment: Comment){
@@ -14,8 +18,6 @@ class CommentsRepository {
             "createdAt" to comment.createdAt,
             "postId" to postId,
             "sender" to comment.senderId,
-            "senderPhoto" to comment.senderPhoto,
-            "senderUsername" to comment.senderUsername
         )
         commentsCollection.add(commentByUser)
             .addOnSuccessListener {
@@ -24,20 +26,26 @@ class CommentsRepository {
 
     }
 
-    fun getPostComments(postId:String,callBack: (List<Comment>) -> Unit){
+    fun getPostComments(postId: String, callBack: (List<Comment>) -> Unit) {
         db.collection("Comments")
-            .whereEqualTo("postId",postId)
+            .whereEqualTo("postId", postId)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val comments = querySnapshot.documents.mapNotNull { document ->
-                    val sender = document.getString("sender") ?: ""
-                    val senderPhoto = document.getString("senderPhoto") ?: ""
-                    val senderUsername = document.getString("senderUsername") ?: ""
-                    val createdAt = document.getLong("createdAt") ?: 0
-                    val content = document.getString("content") ?: ""
-                    Comment(sender,senderPhoto,senderUsername,content,createdAt)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val comments = querySnapshot.documents.mapNotNull { document ->
+                        val createdAt = document.getLong("createdAt") ?: 0
+                        val content = document.getString("content") ?: ""
+                        val sender = document.getString("sender") ?: ""
+
+                        val user = userRepository.getUserDocument(sender)
+                        user?.let {
+                            Comment(it.id, it.profilePhoto, it.username, content, createdAt)
+                        }
+                    }
+                    withContext(Dispatchers.Main) {
+                        callBack(comments)
+                    }
                 }
-                callBack(comments)
             }
             .addOnFailureListener {
                 callBack(emptyList())

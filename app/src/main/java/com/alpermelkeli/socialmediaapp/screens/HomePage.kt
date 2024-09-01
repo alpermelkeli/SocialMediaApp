@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit, onClickedStory:(String)->Unit) {
+fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Unit, onClickedOwnPostProfile:()->Unit, onClickedMessages:()->Unit,onClickedStory:(String)->Unit) {
 
     val scope = rememberCoroutineScope()
 
@@ -105,6 +105,9 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
 
     val onClickedComment = {post: Post ->
         isCommentSheetOpen = true
+        scope.launch {
+            commentSheetState.expand()
+        }
         selectedPost = post.postId
         commentViewModel.getPostComments(post.postId)
     }
@@ -116,7 +119,7 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
     val onRefresh = {
         scope.launch {
             isRefreshing = true
-            delay(3000)
+            delay(500)
             isRefreshing = false
             user?.following?.let {
                 postViewModel.getUserHomePagePosts(it)
@@ -147,7 +150,7 @@ fun HomePage(onCameraClicked:()->Unit, onClickedPostProfile:(userId:String)->Uni
                 permissionViewModel.checkCameraPermission(context, onGranted = {onCameraClicked()}, onUnGranted = {permissionLauncher.launch(Manifest.permission.CAMERA)})
             },
                 onClickMessages = {
-                    Log.d("Direct Message", "Direct Message has been invoked")
+                    onClickedMessages()
                 })
         }) {
 
