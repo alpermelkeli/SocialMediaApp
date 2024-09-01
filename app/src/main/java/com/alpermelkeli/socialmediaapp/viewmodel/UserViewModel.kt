@@ -12,30 +12,29 @@ import kotlinx.coroutines.launch
 class UserViewModel(application: Application, private val userRepository: UserRepository): AndroidViewModel(application) {
 
 
-    private val _user : MutableLiveData<User> = MutableLiveData()
+    private val _user : MutableLiveData<User?> = MutableLiveData()
 
-    val user : LiveData<User> get() = _user
+    val user : MutableLiveData<User?> get() = _user
 
-    private val _targetUser : MutableLiveData<User> = MutableLiveData()
+    private val _targetUser : MutableLiveData<User?> = MutableLiveData()
 
-    val targetUser : LiveData<User> get() = _targetUser
+    val targetUser : MutableLiveData<User?> get() = _targetUser
 
     private val _searchResults: MutableLiveData<List<User>> = MutableLiveData()
 
     val searchResults: LiveData<List<User>> get() = _searchResults
 
-    fun getUser(id:String){
+    fun getUser(id: String) {
         viewModelScope.launch {
-            userRepository.getUserDocument(id){
-             _user.postValue(it)
-            }
+            val user = userRepository.getUserDocument(id)
+            _user.postValue(user)
         }
     }
-    fun getTargetUser(id:String){
+
+    fun getTargetUser(id: String) {
         viewModelScope.launch {
-            userRepository.getUserDocument(id){
-                _targetUser.postValue(it)
-            }
+            val targetUser = userRepository.getUserDocument(id)
+            _targetUser.postValue(targetUser)
         }
     }
     fun searchUsers(username: String) {
@@ -65,6 +64,7 @@ class UserViewModel(application: Application, private val userRepository: UserRe
         viewModelScope.launch {
             userRepository.uploadProfilePhotoStorage(userId,uri){
                 userRepository.uploadProfilePhoto(userId,it)
+                getUser(userId)
             }
         }
 

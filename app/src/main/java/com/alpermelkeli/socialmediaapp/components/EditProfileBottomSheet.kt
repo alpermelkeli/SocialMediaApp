@@ -58,6 +58,12 @@ fun EditProfileBottomSheet(sheetState: SheetState, onDismissRequest:()->Unit){
                 ShimmerEffectImage(modifier = Modifier
                     .size(200.dp)
                     .clip(CircleShape), data = selectedProfilePhoto?.uri.toString())
+
+                Button(onClick = { selectedProfilePhoto?.uri?.let {
+                    userViewModel.updateProfilePhoto(user?.id.toString(), it)
+                } }) {
+                    Text(text = "Upload photo")
+                }
             }
 
             items(photos.chunked(3)) { rowItems ->
@@ -78,13 +84,6 @@ fun EditProfileBottomSheet(sheetState: SheetState, onDismissRequest:()->Unit){
                 }
             }
 
-            item {
-                Button(onClick = { selectedProfilePhoto?.uri?.let {
-                    userViewModel.updateProfilePhoto(user?.id.toString(), it)
-                } }) {
-                    Text(text = "Upload photo")
-                }
-            }
         }
 
     }

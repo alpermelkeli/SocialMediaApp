@@ -9,56 +9,70 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Collections
 import java.util.UUID
 
-class PostsRepository {
+class PostsRepository(private val userRepository: UserRepository) {
     private val db = FirebaseFirestore.getInstance()
+
     fun getUserHomePagePosts(followings: List<String>, callBack: (List<Post>) -> Unit) {
         if (followings.isEmpty()) {
             callBack(emptyList())
             return
         }
-
         db.collection("Posts")
-            .whereIn("sender", followings) // Filter posts whose id is in the followings list
+            .whereIn("sender", followings)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val posts = querySnapshot.documents.mapNotNull { document ->
-                    val postId = document.id
-                    val sender = document.getString("sender") ?: ""
-                    val images = document.get("images") as? List<String> ?: emptyList()
-                    val username = document.getString("username") ?: ""
-                    val profilePhoto = document.getString("senderPhoto") ?: ""
-                    val timestamp = document.getLong("timestamp") ?: 0
-                    Post(postId,sender,images,profilePhoto,username,timestamp)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val posts = querySnapshot.documents.mapNotNull { document ->
+                        val postId = document.id
+                        val sender = document.getString("sender") ?: ""
+                        val images = document.get("images") as? List<String> ?: emptyList()
+                        val timestamp = document.getLong("timestamp") ?: 0
+                        val user = userRepository.getUserDocument(sender)
+                        user?.let{
+                            Post(postId,sender,images,it.profilePhoto,it.username,timestamp)
+                        }
+                    }
+                    withContext(Dispatchers.Main){
+                        val sortedPosts = posts.sortedByDescending { it.timestamp }
+                        callBack(sortedPosts)
+                    }
                 }
-                val sortedPosts = posts.sortedByDescending { it.timestamp }
-                callBack(sortedPosts)
             }
             .addOnFailureListener { exception ->
                 callBack(emptyList())
+                exception.printStackTrace()
             }
     }
+
     fun getUserPosts(id: String, callBack: (List<Post>) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
 
         db.collection("Posts")
             .whereEqualTo("sender", id)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val posts = querySnapshot.documents.mapNotNull { document ->
-                    val postId = document.id
-                    val sender = document.getString("sender") ?: ""
-                    val images = document.get("images") as? List<String> ?: emptyList()
-                    val username = document.getString("username") ?: ""
-                    val profilePhoto = document.getString("senderPhoto") ?: ""
-                    val timestamp = document.getLong("timestamp") ?: 0
-
-                    Post(postId,sender,images,profilePhoto,username,timestamp)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val posts = querySnapshot.documents.mapNotNull { document ->
+                        val postId = document.id
+                        val sender = document.getString("sender") ?: ""
+                        val images = document.get("images") as? List<String> ?: emptyList()
+                        val timestamp = document.getLong("timestamp") ?: 0
+                        val user = userRepository.getUserDocument(sender)
+                        user?.let{
+                            Post(postId,sender,images,it.profilePhoto,it.username,timestamp)
+                        }
+                    }
+                    withContext(Dispatchers.Main){
+                        val sortedPosts = posts.sortedByDescending { it.timestamp }
+                        callBack(sortedPosts)
+                    }
                 }
-                val sortedPosts = posts.sortedByDescending { it.timestamp }
-                callBack(sortedPosts)
             }
             .addOnFailureListener { exception ->
                 callBack(emptyList())
@@ -70,8 +84,6 @@ class PostsRepository {
         val postByUser = mapOf(
             "images" to post.images,
             "sender" to post.senderId,
-            "senderPhoto" to post.senderPhoto,
-            "username" to post.senderUsername,
             "timestamp" to post.timestamp
         )
 
@@ -88,13 +100,12 @@ class PostsRepository {
 
         uris.forEach { uri ->
             val uuid = UUID.randomUUID().toString()
-            val photoRef = storage.reference.child("/users/$userId/posts/$uuid")
+            val photoRef = storage.reference.child("/Users/$userId/posts/$uuid")
 
             val uploadTask = photoRef.putFile(uri).continueWithTask { task ->
                 if (!task.isSuccessful) {
                     task.exception?.let { throw it }
                 }
-                // Continue with the download URL task
                 photoRef.downloadUrl
             }.addOnSuccessListener { downloadUrl ->
                 urlList.add(downloadUrl.toString())

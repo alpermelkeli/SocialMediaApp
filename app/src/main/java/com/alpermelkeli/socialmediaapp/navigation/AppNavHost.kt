@@ -11,6 +11,7 @@ import com.alpermelkeli.socialmediaapp.screens.Camera
 import com.alpermelkeli.socialmediaapp.screens.EditProfile
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
+import com.alpermelkeli.socialmediaapp.screens.Messages
 import com.alpermelkeli.socialmediaapp.screens.SignUp
 import com.alpermelkeli.socialmediaapp.screens.SendStory
 import com.alpermelkeli.socialmediaapp.screens.Splash
@@ -120,6 +121,9 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
 
         composable(NavRoutes.EditProfile.route){
             EditProfile()
+        }
+        composable(NavRoutes.Messages.route){
+            Messages()
         }
 
     }

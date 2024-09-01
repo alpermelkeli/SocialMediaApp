@@ -12,5 +12,6 @@ sealed class NavRoutes(val route:String){
     object TargetProfile : NavRoutes("targetprofile/{userId}")
     object TargetStory : NavRoutes("targetstory/{userId}")
     object EditProfile : NavRoutes("editprofile")
+    object Messages : NavRoutes("messages")
 
 }
