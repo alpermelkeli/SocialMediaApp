@@ -13,7 +13,7 @@ sealed class Permission(
 
     object CameraPermission: Permission(){
         override fun hasPermission(context: Context): Boolean {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
             return ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.CAMERA
@@ -22,7 +22,7 @@ sealed class Permission(
     }
     object MediaImagesPermission:Permission(){
         override fun hasPermission(context: Context): Boolean {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
             return ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.READ_MEDIA_IMAGES

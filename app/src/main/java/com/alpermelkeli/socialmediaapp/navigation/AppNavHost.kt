@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.alpermelkeli.socialmediaapp.screens.Camera
+import com.alpermelkeli.socialmediaapp.screens.Chat
 import com.alpermelkeli.socialmediaapp.screens.EditProfile
 import com.alpermelkeli.socialmediaapp.screens.Login
 import com.alpermelkeli.socialmediaapp.screens.LoginWithField
@@ -122,9 +123,19 @@ fun AppNavHost(navController:NavHostController, startDestination:String, initial
         composable(NavRoutes.EditProfile.route){
             EditProfile()
         }
-        composable(NavRoutes.Messages.route){
-            Messages()
+        composable(NavRoutes.Messages.route) {
+            Messages (onClickBack = {navController.popBackStack()}){ conversationId ->
+                navController.navigate(NavRoutes.Chat.route + "/$conversationId")
+            }
         }
+        composable(
+            route = NavRoutes.Chat.route + "/{conversationId}",
+            arguments = listOf(navArgument("conversationId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getString("conversationId") ?: return@composable
+            Chat(conversationId = conversationId, onUpPressed = { navController.popBackStack() })
+        }
+
 
     }
 

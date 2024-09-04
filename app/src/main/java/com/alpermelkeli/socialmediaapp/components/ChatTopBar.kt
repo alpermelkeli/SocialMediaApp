@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,42 +30,37 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alpermelkeli.socialmediaapp.R
+import com.alpermelkeli.socialmediaapp.model.User
 
 @Composable
-fun ChatTopBar(onUpPressed: () -> Unit) {
+fun ChatTopBar(onUpPressed: () -> Unit, targetUser: User?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(top = 25.dp)
     ){
         IconButton(onClick = { onUpPressed() }) {
+
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .size(56.dp)
                     .padding(12.dp)
             )
         }
         Spacer(Modifier.width(16.dp))
-        Surface(
-            modifier = Modifier.size(32.dp),
-            shape = CircleShape,
-            color = Color.Green
-        ){
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
-                contentDescription =null,
-                tint = Color.White,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(4.dp)
-            )
-        }
+
+        ShimmerEffectImage(modifier = Modifier.size(32.dp)
+            .clip(CircleShape),
+            data = targetUser?.profilePhoto.toString()
+        )
+
+
         Spacer(Modifier.width(12.dp))
         Text(
-            text = "the_jarvis",
-            color = MaterialTheme.colorScheme.onSurface,
+            text = targetUser?.username.toString(),
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
             modifier = Modifier.weight(1f),
@@ -69,18 +69,18 @@ fun ChatTopBar(onUpPressed: () -> Unit) {
         )
         Spacer(Modifier.width(12.dp))
         Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
+            imageVector = Icons.Default.Phone,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier
                 .size(56.dp)
                 .padding(16.dp)
                 .rotate(270f)
         )
         Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
+            imageVector = Icons.Default.Menu,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier
                 .size(56.dp)
                 .padding(16.dp)

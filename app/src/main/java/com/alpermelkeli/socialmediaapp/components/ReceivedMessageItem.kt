@@ -35,26 +35,6 @@ fun ReceivedMessageItem(chat: String, isPrevReceived: Boolean, isNextReceived: B
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp, bottom = if (!isNextReceived) 0.dp else 24.dp)
     ) {
-        if(isNextReceived) {
-            Spacer(Modifier.width(10.dp))
-            Surface(
-                modifier = Modifier.size(28.dp),
-                shape = CircleShape,
-                color = Color.Green
-            ){
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.comment_icon),
-                    contentDescription =null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
-                )
-            }
-            Spacer(Modifier.width(10.dp))
-        } else{
-            Spacer(Modifier.width(48.dp))
-        }
         var fontSize = 15.sp
         var textModifier = Modifier
             .background(

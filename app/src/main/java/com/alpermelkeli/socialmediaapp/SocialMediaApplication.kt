@@ -55,7 +55,7 @@ class SocialMediaApplication: Application() {
         commentsRepository = CommentsRepository(userRepository)
         galleryRepository = GalleryRepository(this.applicationContext)
         storiesRepository = StoriesRepository(userRepository)
-        messageRepository = MessageRepository()
+        messageRepository = MessageRepository(userRepository)
         storeData = StoreData(this)
         permissionViewModel = PermissionViewModel(this)
         userViewModel = UserViewModel(application = this, userRepository)

@@ -1,85 +1,103 @@
 package com.alpermelkeli.socialmediaapp.screens
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alpermelkeli.socialmediaapp.SocialMediaApplication
 import com.alpermelkeli.socialmediaapp.components.ChatBottomBar
 import com.alpermelkeli.socialmediaapp.components.ChatTopBar
 import com.alpermelkeli.socialmediaapp.components.ReceivedMessageItem
 import com.alpermelkeli.socialmediaapp.components.SentMessageItem
 import com.alpermelkeli.socialmediaapp.model.ChatMessage
+import com.alpermelkeli.socialmediaapp.model.MessageStatus
+import com.alpermelkeli.socialmediaapp.model.MessageType
+import com.google.firebase.Timestamp
+import kotlinx.coroutines.launch
 
-@Preview
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Prev(){
-    Chat {
+fun Chat(conversationId: String, onUpPressed: () -> Unit) {
+    val application = LocalContext.current.applicationContext as SocialMediaApplication
 
-    }
-}
+    val messageViewModel = application.messageViewModel
+    val userViewModel = application.userViewModel
 
+    val chatMessages by messageViewModel.conversationMessages.observeAsState(emptyList())
+    val targetUser by userViewModel.targetUser.observeAsState()
 
-@Composable
-fun Chat(onUpPressed:()-> Unit) {
-    val chatMessage =ChatMessage(isReceived = false, content = "What is this...?", isEmojiOnly = false, senderPhoto = "", senderId = "")
+    val scrollState = rememberLazyListState()
 
-    val chats = mutableListOf<ChatMessage>()
-
-    for(i in 1..100){
-        chats.add(chatMessage)
+    LaunchedEffect(chatMessages.size) {
+        if(chatMessages.size>0)scrollState.animateScrollToItem(chatMessages.size - 1)
     }
 
-    Column(Modifier.fillMaxSize()) {
-        ChatTopBar(onUpPressed)
-
+    Scaffold(
+        topBar = { ChatTopBar(onUpPressed, targetUser) },
+        bottomBar = {
+            ChatBottomBar(
+                onSentMessageClicked = { message ->
+                    messageViewModel.sendMessage(conversationId, message)
+                },
+                50.dp
+            )
+        }
+    ) { innerPadding ->
         ChatList(
-            Modifier
-                .fillMaxWidth()
-                .weight(1f), chats)
-
-        ChatBottomBar()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            chats = chatMessages,
+            scrollState = scrollState
+        )
     }
 }
 
 @Composable
-fun ChatList(modifier: Modifier, chats: List<ChatMessage>) {
-    var listHeight by remember { mutableStateOf(0f) }
+fun ChatList(modifier: Modifier, chats: List<ChatMessage>, scrollState: LazyListState) {
     LazyColumn(
+        state = scrollState,
         verticalArrangement = Arrangement.spacedBy(1.dp),
-        modifier = modifier.onGloballyPositioned { coordinates: LayoutCoordinates ->
-            listHeight = coordinates.size.height.toFloat()
-        },
+        modifier = modifier
     ) {
         itemsIndexed(chats) { index, item ->
-            if(item.isReceived) {
+            if (item.isReceived) {
                 ReceivedMessageItem(
                     chat = item.content,
-                    isPrevReceived = if(index == 0) true else !chats[index-1].isReceived,
-                    isNextReceived = if(index == chats.size - 1) true else !chats[index+1].isReceived,
-                    isEmojiOnly = chats[index].isEmojiOnly,
-                    isPrevEmojiOnly = if(index == 0) true else chats[index-1].isEmojiOnly,
-                    isNextEmojiOnly = if(index == chats.size -1 ) false else chats[index+1].isEmojiOnly,
+                    isPrevReceived = index == 0 || !chats[index - 1].isReceived,
+                    isNextReceived = index == chats.size - 1 || !chats[index + 1].isReceived,
+                    isEmojiOnly = item.isEmojiOnly,
+                    isPrevEmojiOnly = index == 0 || chats[index - 1].isEmojiOnly,
+                    isNextEmojiOnly = index == chats.size - 1 || chats[index + 1].isEmojiOnly
                 )
             } else {
                 SentMessageItem(
                     chat = item.content,
-                    isPrevSent = if(index == 0) true else chats[index-1].isReceived,
-                    isNextSent = if(index == chats.size - 1) true else chats[index+1].isReceived,
-                    isEmojiOnly = chats[index].isEmojiOnly,
-                    isPrevEmojiOnly = if(index == 0) true else chats[index-1].isEmojiOnly,
-                    isNextEmojiOnly = if(index == chats.size -1 ) false else chats[index+1].isEmojiOnly,
-                    listHeight = listHeight
+                    isPrevSent = index == 0 || chats[index - 1].isReceived,
+                    isNextSent = index == chats.size - 1 || chats[index + 1].isReceived,
+                    isEmojiOnly = item.isEmojiOnly,
+                    isPrevEmojiOnly = index == 0 || chats[index - 1].isEmojiOnly,
+                    isNextEmojiOnly = index == chats.size - 1 || chats[index + 1].isEmojiOnly
                 )
             }
         }
     }
 }
-
 
 
 
